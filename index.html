@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>红黑榜</title>
+<meta name="description" content="我的私房菜品评分册。">
+
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#17130f" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#efe7d4" media="(prefers-color-scheme: light)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="红黑榜">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/icon-192.png" sizes="192x192">
+
+<!-- 字体走 Google Fonts：离线时自动回落到 PingFang / Songti，不影响可用 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<div class="app">
+  <header class="app-header">
+    <div class="title-row">
+      <div class="seal" aria-hidden="true">榜</div>
+      <div>
+        <h1>红黑榜</h1>
+        <p class="tagline">我的私房菜品评分册</p>
+      </div>
+      <button type="button" class="sync-chip" id="sync-chip" title="云同步">未登录</button>
+    </div>
+  </header>
+
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="search" id="search" placeholder="搜菜名…" aria-label="搜索菜名">
+    </div>
+    <div class="filter-row2">
+      <button type="button" class="ban-toggle" id="ban-filter">只看长期禁忌</button>
+    </div>
+  </div>
+
+  <main class="board" id="board" aria-live="polite"></main>
+
+  <button class="fab" id="fab" aria-label="添加菜品" title="添加菜品">+</button>
+
+  <dialog id="sheet">
+    <form class="sheet" id="form" method="dialog">
+      <h3 id="sheet-title">添加菜品</h3>
+      <input type="hidden" id="edit-id" value="">
+
+      <div class="field">
+        <label for="f-name">菜名</label>
+        <input type="text" id="f-name" maxlength="40" placeholder="例如：麻婆豆腐" autocomplete="off">
+        <p class="field-error" id="name-error">请填写菜名</p>
+      </div>
+
+      <div class="field">
+        <label>口味</label>
+        <div class="toggle-pair" id="toggle-taste">
+          <button type="button" data-val="red" class="on red">好吃</button>
+          <button type="button" data-val="mid">一般</button>
+          <button type="button" data-val="ink">踩雷</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>健康程度</label>
+        <div class="toggle-pair" id="toggle-health">
+          <button type="button" data-val="red" class="on red">健康</button>
+          <button type="button" data-val="mid">一般</button>
+          <button type="button" data-val="ink">重口</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-note">备注（选填）</label>
+        <textarea id="f-note" maxlength="200" placeholder="味道、店家、下次要不要辣…"></textarea>
+      </div>
+
+      <div class="field">
+        <div class="ban-field">
+          <p>长期禁忌<span>保健品、预制菜这类，不列入日常</span></p>
+          <button type="button" class="ban-switch" id="toggle-banned" role="switch" aria-checked="false" aria-label="长期禁忌"></button>
+        </div>
+      </div>
+
+      <div class="sheet-actions">
+        <button type="button" class="btn" id="cancel-btn">取消</button>
+        <button type="submit" class="btn primary" id="save-btn">保存</button>
+      </div>
+      <div class="delete-row" id="delete-row" hidden>
+        <button type="button" class="delete-link" id="delete-btn">删除这道菜</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="acct">
+    <div class="sheet">
+      <h3>云同步</h3>
+      <p class="acct-status" id="acct-status">未登录</p>
+
+      <form id="acct-form" autocomplete="on">
+        <div class="field">
+          <label for="acct-email">邮箱</label>
+          <input type="email" id="acct-email" autocomplete="username" required>
+        </div>
+        <div class="field">
+          <label for="acct-pass">密码</label>
+          <input type="password" id="acct-pass" autocomplete="current-password" minlength="6" required>
+        </div>
+        <p class="acct-hint">和「河」用同一个账号，登录后两台设备看同一份榜单。</p>
+        <div class="sheet-actions">
+          <button type="submit" class="btn primary" id="acct-signin">登录</button>
+          <button type="button" class="btn" id="acct-signup">注册</button>
+        </div>
+      </form>
+
+      <div id="acct-in" hidden>
+        <div class="sheet-actions">
+          <button type="button" class="btn primary" id="acct-syncnow">立即同步</button>
+          <button type="button" class="btn" id="acct-signout">退出登录</button>
+        </div>
+      </div>
+
+      <p class="acct-msg" id="acct-msg" hidden></p>
+      <div class="sheet-actions">
+        <button type="button" class="btn" id="acct-close">关闭</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<!-- Supabase 客户端放本地而不是 CDN，否则离线时装不上 -->
+<script src="js/vendor/supabase.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

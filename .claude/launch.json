@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "hong-hei-bang",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8813"],
+      "port": 8813
+    }
+  ]
+}
