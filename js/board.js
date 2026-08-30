@@ -6,8 +6,8 @@
 const QUADRANTS = [
   { key: "tl", title: "健康但踩雷", kind: "plain-faint", caption: "健康 · 口味差" },
   { key: "tr", title: "红榜",       kind: "hero-red",    caption: "好吃 · 健康" },
-  { key: "bl", title: "黑榜",       kind: "hero-ink",    caption: "踩雷 · 重口" },
-  { key: "br", title: "好吃但重口", kind: "plain",       caption: "好吃 · 不健康/重口" }
+  { key: "bl", title: "黑榜",       kind: "hero-ink",    caption: "踩雷 · 糟糕" },
+  { key: "br", title: "好吃但糟糕", kind: "plain",       caption: "好吃 · 不健康/糟糕" }
 ];
 
 const TITLE_CLASS = {
@@ -66,7 +66,7 @@ export function render(board, items, filters) {
   board.innerHTML =
     '<div class="chart-frame">' +
     '<div class="axis axis-top">健康 ▲</div>' +
-    '<div class="axis axis-bottom">▼ 不健康 / 重口</div>' +
+    '<div class="axis axis-bottom">▼ 不健康 / 糟糕</div>' +
     '<div class="axis axis-left"><span>口味差</span></div>' +
     '<div class="axis axis-right"><span>口味好</span></div>' +
     '<div class="quadrant-grid">' +
