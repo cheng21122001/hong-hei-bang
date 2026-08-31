@@ -272,22 +272,27 @@
     transform: rotate(-90deg);
   }
 
-  /* 不框死：四格随内容长高，页面整体滚动，格子内部不再各自滚动 */
   .quadrant-grid {
     grid-area: grid;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    gap: 8px;
-    background: transparent;
+    grid-template-rows: 1fr 1fr;
+    height: min(72vh, 640px);
+    border: 1px solid var(--border-strong);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--surface);
   }
 
-  /* 没有边框，靠四块淡底色分区；空象限就留白，那是信息不是排版事故 */
   .qbox {
-    padding: 10px 10px 14px;
+    padding: 10px 10px 12px;
     min-width: 0;
-    border-radius: 14px;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
+  .qbox.q-tl, .qbox.q-tr { border-bottom: 1.5px solid var(--border-strong); }
+  .qbox.q-tl, .qbox.q-bl { border-right: 1.5px solid var(--border-strong); }
 
   .empty {
     margin-top: 40px;
