@@ -5,7 +5,7 @@
    改了任何静态文件，就把 VERSION 加一，否则一直喂旧缓存。
 */
 
-const VERSION = "hhb-v5";
+const VERSION = "hhb-v9";
 
 const ASSETS = [
   "./",

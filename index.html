@@ -27,11 +27,7 @@
 <div class="app">
   <header class="app-header">
     <div class="title-row">
-      <div class="seal" aria-hidden="true">榜</div>
-      <div>
-        <h1>红黑榜</h1>
-        <p class="tagline">我的私房菜品评分册</p>
-      </div>
+      <h1><span class="w-red">红</span><span class="w-ink">黑</span>榜</h1>
       <button type="button" class="sync-chip" id="sync-chip" title="云同步">未登录</button>
     </div>
   </header>
@@ -41,9 +37,7 @@
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
       <input type="search" id="search" placeholder="搜菜名…" aria-label="搜索菜名">
     </div>
-    <div class="filter-row2">
-      <button type="button" class="ban-toggle" id="ban-filter">只看长期禁忌</button>
-    </div>
+    <button type="button" class="ban-toggle" id="ban-filter">禁忌</button>
   </div>
 
   <main class="board" id="board" aria-live="polite"></main>

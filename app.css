@@ -11,10 +11,6 @@
     --accent-ink-contrast: #f3ecdc;
     --border: rgba(33, 28, 22, 0.14);
     --border-strong: rgba(33, 28, 22, 0.28);
-    --tint-red: rgba(196, 61, 43, 0.08);
-    --tint-red-soft: rgba(196, 61, 43, 0.04);
-    --tint-ink: rgba(33, 28, 22, 0.06);
-    --tint-ink-soft: rgba(33, 28, 22, 0.025);
     --focus: #8f2a1e;
     --shadow: 0 1px 2px rgba(33, 28, 22, 0.06), 0 6px 20px -8px rgba(33, 28, 22, 0.22);
   }
@@ -32,10 +28,6 @@
       --accent-ink-contrast: #efe6d2;
       --border: rgba(239, 230, 210, 0.14);
       --border-strong: rgba(239, 230, 210, 0.26);
-      --tint-red: rgba(226, 96, 74, 0.13);
-      --tint-red-soft: rgba(226, 96, 74, 0.06);
-      --tint-ink: rgba(0, 0, 0, 0.28);
-      --tint-ink-soft: rgba(0, 0, 0, 0.14);
       --focus: #e2604a;
       --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 28px -10px rgba(0, 0, 0, 0.55);
     }
@@ -53,10 +45,6 @@
     --accent-ink-contrast: #efe6d2;
     --border: rgba(239, 230, 210, 0.14);
     --border-strong: rgba(239, 230, 210, 0.26);
-    --tint-red: rgba(226, 96, 74, 0.13);
-    --tint-red-soft: rgba(226, 96, 74, 0.06);
-    --tint-ink: rgba(0, 0, 0, 0.28);
-    --tint-ink-soft: rgba(0, 0, 0, 0.14);
     --focus: #e2604a;
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 28px -10px rgba(0, 0, 0, 0.55);
   }
@@ -79,10 +67,12 @@
     * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
   }
 
+  /* 整页不滚：表格钉在屏幕里，位置永远不变 */
   .app {
     width: 100%;
     max-width: 600px;
-    min-height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     background: var(--bg);
@@ -103,36 +93,17 @@
     gap: 12px;
   }
 
-  .seal {
-    flex: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 9px;
-    background: var(--accent-red);
-    color: var(--accent-red-contrast);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: "Noto Serif SC", serif;
-    font-weight: 900;
-    font-size: 17px;
-    transform: rotate(-3deg);
-    box-shadow: var(--shadow);
-  }
-
+  /* 标题自己就是图例：红字对应红榜，墨字对应黑榜 */
   h1 {
     margin: 0;
     font-family: "Noto Serif SC", serif;
     font-weight: 900;
-    font-size: 22px;
-    letter-spacing: 0.5px;
+    font-size: 25px;
+    letter-spacing: 1px;
+    color: var(--text);
   }
-
-  .tagline {
-    margin: 1px 0 0;
-    font-size: 12.5px;
-    color: var(--text-muted);
-  }
+  h1 .w-red { color: var(--accent-red); }
+  h1 .w-ink { color: var(--text); }
 
   /* ---------- 同步状态药丸 ---------- */
   .sync-chip {
@@ -170,7 +141,7 @@
     margin: 14px 0 0;
     padding: 9px 12px;
     border-radius: 9px;
-    background: var(--tint-red);
+    background: color-mix(in srgb, var(--accent-red) 10%, transparent);
     color: var(--accent-red);
     font-size: 12.5px;
     line-height: 1.5;
@@ -182,14 +153,13 @@
     top: 0;
     z-index: 15;
     background: var(--bg);
-    padding: 14px 20px 12px;
+    padding: 12px 20px 12px;
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 10px;
-    border-bottom: 1px solid var(--border);
   }
 
-  .search-wrap { position: relative; }
+  .search-wrap { position: relative; flex: 1; min-width: 0; }
 
   .search-wrap svg {
     position: absolute;
@@ -213,18 +183,16 @@
 
   input[type="search"]::placeholder { color: var(--text-muted); }
 
-  .filter-row2 { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
-
   .ban-toggle {
     flex: none;
     border: 1px solid var(--border);
     background: var(--surface);
     color: var(--text-muted);
     font: inherit;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
-    padding: 6px 12px;
-    border-radius: 100px;
+    padding: 9px 14px;
+    border-radius: 10px;
     cursor: pointer;
     white-space: nowrap;
   }
@@ -233,66 +201,84 @@
   /* ---------- board / quadrant ---------- */
   .board {
     flex: 1;
-    padding: 14px 14px 100px;
+    min-height: 0;
+    padding: 0 14px 14px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
   }
 
-  .chart-frame {
+  /* 这张表是固定不动的视觉中心：整页不滚，只有格子内部各自滚。
+     九格用纸色直接拼在一起，不画边框——色块自己就分得开。 */
+  .chart {
+    flex: 1;
+    min-height: 0;
     display: grid;
-    grid-template-columns: 20px 1fr 20px;
-    grid-template-rows: 22px 1fr 22px;
-    grid-template-areas:
-      ".    top    ."
-      "left grid   right"
-      ".    bottom .";
-    gap: 4px;
+    grid-template-columns: 30px 1fr;
+    grid-template-rows: 1fr 20px;
+    gap: 5px;
   }
 
-  .axis {
+  .grid9 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    min-height: 0;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  /* 坐标轴：只标三档的名字，轨道跟着格子走，不画箭头不画线 */
+  .ax {
+    display: grid;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    color: var(--text-muted);
+    min-height: 0;
+  }
+  .ax span {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 3px;
-    font-size: 10.5px;
-    font-weight: 500;
-    color: var(--text-muted);
-    letter-spacing: 0.2px;
-    white-space: nowrap;
-  }
-  .axis-top { grid-area: top; }
-  .axis-bottom { grid-area: bottom; }
-  .axis-left, .axis-right { overflow: visible; }
-  .axis-left { grid-area: left; }
-  .axis-right { grid-area: right; }
-  .axis-left span, .axis-right span {
-    display: inline-block;
-    white-space: nowrap;
-    transform: rotate(-90deg);
-  }
-
-  .quadrant-grid {
-    grid-area: grid;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    height: min(72vh, 640px);
-    border: 1px solid var(--border-strong);
-    border-radius: 16px;
     overflow: hidden;
-    background: var(--surface);
   }
+  .ax-y span { writing-mode: vertical-rl; }
+  .ax-x { grid-column: 2; }
 
-  .qbox {
-    padding: 10px 10px 12px;
+  .cell {
+    padding: 0 9px 10px;
     min-width: 0;
     min-height: 0;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    background: var(--heat-bg);
   }
-  .qbox.q-tl, .qbox.q-tr { border-bottom: 1.5px solid var(--border-strong); }
-  .qbox.q-tl, .qbox.q-bl { border-right: 1.5px solid var(--border-strong); }
+  .cell::-webkit-scrollbar { width: 0; height: 0; }
+  /* 加号浮在右下那格上面，给它让出位置 */
+  .cell[data-key="red-ink"] { padding-bottom: 58px; }
+
+  /* 从黑榜（0）到红榜（4）的渐变：纸色一路转暖，墨色一路由浓墨转朱红。
+     判断写在字上，所以中间几档也分得出来，不用再靠虚线边框区分。 */
+  .heat-0 { --heat-bg: #ddd2bc; --heat-ink: #241d15; --heat-rule: rgba(36,29,21,.22); }
+  .heat-1 { --heat-bg: #e3d9c5; --heat-ink: #3b3124; --heat-rule: rgba(59,49,36,.20); }
+  .heat-2 { --heat-bg: #e9e0cf; --heat-ink: #5b4636; --heat-rule: rgba(91,70,54,.18); }
+  .heat-3 { --heat-bg: #f0e4d6; --heat-ink: #8a4429; --heat-rule: rgba(138,68,41,.20); }
+  .heat-4 { --heat-bg: #f8e7d9; --heat-ink: #a8331f; --heat-rule: rgba(168,51,31,.24); }
+
+  /* 夜间同一条渐变：纸变成夜里的墙，朱红提亮，浓墨压到比页面还深 */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .heat-0 { --heat-bg: #100c08; --heat-ink: #9a8e76; --heat-rule: rgba(154,142,118,.20); }
+    :root:not([data-theme="light"]) .heat-1 { --heat-bg: #191309; --heat-ink: #ab9b7f; --heat-rule: rgba(171,155,127,.18); }
+    :root:not([data-theme="light"]) .heat-2 { --heat-bg: #221a12; --heat-ink: #c0a184; --heat-rule: rgba(192,161,132,.18); }
+    :root:not([data-theme="light"]) .heat-3 { --heat-bg: #2c1c14; --heat-ink: #d97a5f; --heat-rule: rgba(217,122,95,.20); }
+    :root:not([data-theme="light"]) .heat-4 { --heat-bg: #3a2018; --heat-ink: #ef7a60; --heat-rule: rgba(239,122,96,.24); }
+  }
+  :root[data-theme="dark"] .heat-0 { --heat-bg: #100c08; --heat-ink: #9a8e76; --heat-rule: rgba(154,142,118,.20); }
+  :root[data-theme="dark"] .heat-1 { --heat-bg: #191309; --heat-ink: #ab9b7f; --heat-rule: rgba(171,155,127,.18); }
+  :root[data-theme="dark"] .heat-2 { --heat-bg: #221a12; --heat-ink: #c0a184; --heat-rule: rgba(192,161,132,.18); }
+  :root[data-theme="dark"] .heat-3 { --heat-bg: #2c1c14; --heat-ink: #d97a5f; --heat-rule: rgba(217,122,95,.20); }
+  :root[data-theme="dark"] .heat-4 { --heat-bg: #3a2018; --heat-ink: #ef7a60; --heat-rule: rgba(239,122,96,.24); }
 
   .empty {
     margin-top: 40px;
@@ -311,85 +297,75 @@
   .empty h2 { font-size: 15px; color: var(--text); margin: 0 0 6px; }
   .empty p { margin: 0; font-size: 13.5px; }
 
-  .qbox.q-tr { background: var(--tint-red); }
-  .qbox.q-br { background: var(--tint-red-soft); }
-  .qbox.q-bl { background: var(--tint-ink); }
-  .qbox.q-tl { background: var(--tint-ink-soft); }
-
-  .qtitle {
+  /* 只有红榜黑榜有名字，跟着那格滚，滚到哪都知道自己在哪 */
+  .cell-name {
+    position: sticky;
+    top: 0;
+    z-index: 1;
     display: flex;
     align-items: baseline;
-    flex-wrap: wrap;
-    gap: 4px 7px;
-    margin: 0 0 2px;
+    gap: 6px;
+    margin: 0 -9px 6px;
+    padding: 9px 9px 6px;
+    background: var(--heat-bg);
     font-family: "Noto Serif SC", serif;
-    font-weight: 700;
+    font-weight: 900;
     font-size: 15px;
+    letter-spacing: 0.5px;
+    color: var(--heat-ink);
   }
-  .qtitle.hero.red { color: var(--accent-red); font-size: 17px; }
-  .qtitle.hero.ink { color: var(--text); font-size: 17px; }
-  .qtitle.plain { color: var(--text); font-weight: 700; font-size: 14px; }
-  .qtitle.plain.faint { color: var(--text-muted); }
 
-  .qcount {
+  /* 其余七格只报个数，靠位置说话 */
+  .cell-n {
     font-family: "JetBrains Mono", monospace;
     font-weight: 500;
-    font-size: 11.5px;
-    color: var(--text-muted);
+    font-size: 10.5px;
+    opacity: 0.55;
   }
-
-  .qcaption {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin: 0 0 10px;
+  .cell-n.solo {
+    display: block;
+    padding: 9px 0 6px;
+    color: var(--heat-ink);
   }
 
   .tag-wrap {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 2px 0;
   }
 
-  .qbox-empty {
-    font-size: 12px;
-    color: var(--text-muted);
-    font-style: italic;
-    opacity: 0.75;
-  }
 
+  /* 菜名不装在盒子里，它就是写在纸上的字。
+     判断由墨色承担：朱红是红榜，浓墨是黑榜。
+     左边那道细界栏是账簿的界行，用来分字，比描边轻得多。 */
   .tag {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 4px;
     max-width: 100%;
-    padding: 6px 9px;
-    border-radius: 8px;
-    border: 1px solid var(--border-strong);
-    background: var(--surface);
-    color: var(--text);
+    padding: 3px 10px 3px 8px;
+    border: 0;
+    border-left: 1px solid var(--heat-rule);
+    border-radius: 0;
+    background: transparent;
+    color: var(--heat-ink);
     font: inherit;
-    font-size: 12.5px;
+    font-size: 13.5px;
     font-weight: 500;
-    line-height: 1.3;
+    line-height: 1.45;
+    letter-spacing: 0.2px;
     cursor: pointer;
     text-align: left;
-  }
-  .tag:hover { border-color: var(--focus); }
-  .tag .tag-name {
-    max-width: 9.5em;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
   }
-  .tag.borderline {
-    border: 1px dashed var(--border-strong);
-    background: transparent;
-    color: var(--text-muted);
-    font-weight: 400;
-  }
+  .tag:hover,
+  .tag:focus-visible { background: var(--heat-rule); }
+
+  /* 长期禁忌：划掉。不需要再套个框
+     （「一般」不用再做特殊处理了——它现在有自己的格子） */
   .tag.is-banned {
-    outline: 1.5px solid var(--accent-red);
-    outline-offset: 1px;
+    text-decoration: line-through;
+    text-decoration-thickness: 1.5px;
+    opacity: 0.7;
   }
 
   /* ---------- fab ---------- */
