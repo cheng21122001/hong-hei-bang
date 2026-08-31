@@ -3,7 +3,7 @@
    「一般」是独立的一档，不该被并进好的那一边——否则「好吃+一般」和
    「好吃+健康」会挤在同一格里，看不出差别。每种组合占一格，位置即评分。
 
-   右上角是红榜（好吃+健康），左下角是黑榜（踩雷+糟糕），
+   右上角是红榜（好吃+健康），左下角是黑榜（踩雷+不健康），
    中间七格按离这两个角的远近渐变，墨色从朱红过渡到浓墨。
 */
 
@@ -13,7 +13,7 @@ const TASTES = ["ink", "mid", "red"];
 const HEALTHS = ["red", "mid", "ink"];
 
 const TASTE_LABEL = { ink: "踩雷", mid: "一般", red: "好吃" };
-const HEALTH_LABEL = { red: "健康", mid: "一般", ink: "糟糕" };
+const HEALTH_LABEL = { red: "健康", mid: "一般", ink: "不健康" };
 
 // 只有两个极点有名字，其余七格靠位置说话
 const NAMED = { "red-red": "红榜", "ink-ink": "黑榜" };
