@@ -9,49 +9,130 @@
 "createdAt": 1787902399067
 },
 {
-"name": "番茄糖醋蛋➕饅頭",
+"name": "番茄糖醋蛋",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-0-bqof8",
+"id": "seed-0-bqof8-s0",
 "createdAt": 1787898635132
 },
 {
-"name": "炒雞蛋➕綠葉菜➕蝦",
+"name": "饅頭",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-1-o17kt",
+"id": "seed-0-bqof8-s1",
+"createdAt": 1787898635131
+},
+{
+"name": "炒雞蛋",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-1-o17kt-s0",
 "createdAt": 1787898575132
 },
 {
-"name": "炒西蘭花➕意麵➕芝士片",
+"name": "綠葉菜",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-2-x30or",
+"id": "seed-1-o17kt-s1",
+"createdAt": 1787898575131
+},
+{
+"name": "蝦",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-1-o17kt-s2",
+"createdAt": 1787898575130
+},
+{
+"name": "炒西蘭花",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-2-x30or-s0",
 "createdAt": 1787898515132
 },
 {
-"name": "蕃茄炒蛋➕水果玉米",
+"name": "意麵",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-3-293ml",
+"id": "seed-2-x30or-s1",
+"createdAt": 1787898515131
+},
+{
+"name": "芝士片",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-2-x30or-s2",
+"createdAt": 1787898515130
+},
+{
+"name": "蕃茄炒蛋",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-3-293ml-s0",
 "createdAt": 1787898455132
 },
 {
-"name": "藍莓➕草莓➕酸奶➕燕麥",
+"name": "水果玉米",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-4-dzeyd",
+"id": "seed-3-293ml-s1",
+"createdAt": 1787898455131
+},
+{
+"name": "藍莓",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-4-dzeyd-s0",
 "createdAt": 1787898395132
+},
+{
+"name": "草莓",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-4-dzeyd-s1",
+"createdAt": 1787898395131
+},
+{
+"name": "酸奶",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-4-dzeyd-s2",
+"createdAt": 1787898395130
+},
+{
+"name": "燕麥",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-4-dzeyd-s3",
+"createdAt": 1787898395129
 },
 {
 "name": "凍香蕉",
@@ -63,22 +144,40 @@
 "createdAt": 1787898335132
 },
 {
-"name": "炒金針菇➕豆腐",
+"name": "炒金針菇",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-6-5e5ef",
+"id": "seed-6-5e5ef-s0",
 "createdAt": 1787898275132
 },
 {
-"name": "糖拌西紅柿➕牛排",
+"name": "豆腐",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-7-02ipc",
+"id": "seed-6-5e5ef-s1",
+"createdAt": 1787898275131
+},
+{
+"name": "糖拌西紅柿",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-7-02ipc-s0",
 "createdAt": 1787898215132
+},
+{
+"name": "牛排",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-7-02ipc-s1",
+"createdAt": 1787898215131
 },
 {
 "name": "紙皮豆沙包",
@@ -90,31 +189,76 @@
 "createdAt": 1787898155132
 },
 {
-"name": "牛奶➕咖啡/抹茶粉",
+"name": "牛奶",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-9-7e5y4",
+"id": "seed-9-7e5y4-s0",
 "createdAt": 1787898095132
 },
 {
-"name": "面皮➕黃瓜➕蝦➕麵條",
+"name": "咖啡/抹茶粉",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-10-8fnuk",
+"id": "seed-9-7e5y4-s1",
+"createdAt": 1787898095131
+},
+{
+"name": "面皮",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-10-8fnuk-s0",
 "createdAt": 1787898035132
 },
 {
-"name": "芭樂➕酸梅粉➕楊桃",
+"name": "黃瓜",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-11-hu5jc",
+"id": "seed-10-8fnuk-s1",
+"createdAt": 1787898035131
+},
+{
+"name": "麵條",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-10-8fnuk-s3",
+"createdAt": 1787898035129
+},
+{
+"name": "芭樂",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-11-hu5jc-s0",
 "createdAt": 1787897975132
+},
+{
+"name": "酸梅粉",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-11-hu5jc-s1",
+"createdAt": 1787897975131
+},
+{
+"name": "楊桃",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-11-hu5jc-s2",
+"createdAt": 1787897975130
 },
 {
 "name": "豬肝",
@@ -135,58 +279,112 @@
 "createdAt": 1787897855132
 },
 {
-"name": "黃瓜絲➕海苔捲➕米飯➕糖醋汁",
+"name": "黃瓜絲",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-14-4mpy8",
+"id": "seed-14-4mpy8-s0",
 "createdAt": 1787897795132
 },
 {
-"name": "年糕➕芝士片",
+"name": "海苔捲",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-15-v1nrq",
+"id": "seed-14-4mpy8-s1",
+"createdAt": 1787897795131
+},
+{
+"name": "米飯",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-14-4mpy8-s2",
+"createdAt": 1787897795130
+},
+{
+"name": "糖醋汁",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-14-4mpy8-s3",
+"createdAt": 1787897795129
+},
+{
+"name": "年糕",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-15-v1nrq-s0",
 "createdAt": 1787897735132
 },
 {
-"name": "酸奶➕金槍魚",
+"name": "金槍魚",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-16-v3b1j",
-"createdAt": 1787897675132
+"id": "seed-16-v3b1j-s1",
+"createdAt": 1787897675131
 },
 {
-"name": "椰子水➕雞肉➕菌菇➕蔬菜乾",
+"name": "雞肉",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-17-3vf1e",
-"createdAt": 1787897615132
+"id": "seed-17-3vf1e-s1",
+"createdAt": 1787897615131
 },
 {
-"name": "烤胡蘿蔔➕聖女果➕雞肉",
+"name": "菌菇",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-18-mwou5",
+"id": "seed-17-3vf1e-s2",
+"createdAt": 1787897615130
+},
+{
+"name": "烤胡蘿蔔",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-18-mwou5-s0",
 "createdAt": 1787897555132
 },
 {
-"name": "彩椒➕蒸蛋➕豆腐",
+"name": "聖女果",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-19-7fw63",
+"id": "seed-18-mwou5-s1",
+"createdAt": 1787897555131
+},
+{
+"name": "彩椒",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-19-7fw63-s0",
 "createdAt": 1787897495132
+},
+{
+"name": "蒸蛋",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-19-7fw63-s1",
+"createdAt": 1787897495131
 },
 {
 "name": "蒸藕粉",
@@ -198,13 +396,22 @@
 "createdAt": 1787897435132
 },
 {
-"name": "豬排➕西蘭花",
+"name": "豬排",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-21-3wpzf",
+"id": "seed-21-3wpzf-s0",
 "createdAt": 1787897375132
+},
+{
+"name": "西蘭花",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-21-3wpzf-s1",
+"createdAt": 1787897375131
 },
 {
 "name": "蛇皮果",
@@ -234,49 +441,103 @@
 "createdAt": 1787897195132
 },
 {
-"name": "烤三文魚頭➕芝士片➕西蘭花",
+"name": "烤三文魚頭",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-25-jvou7",
+"id": "seed-25-jvou7-s0",
 "createdAt": 1787897135132
 },
 {
-"name": "炒肉絲➕綠葉菜➕玉米粒",
+"name": "炒肉絲",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-26-vbddg",
+"id": "seed-26-vbddg-s0",
 "createdAt": 1787897075132
 },
 {
-"name": "刀削麵➕排骨肉骨茶",
+"name": "玉米粒",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-27-26ox3",
+"id": "seed-26-vbddg-s2",
+"createdAt": 1787897075130
+},
+{
+"name": "刀削麵",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-27-26ox3-s0",
 "createdAt": 1787897015132
 },
 {
-"name": "蒸南瓜➕蝦➕醋溜白菜",
+"name": "排骨肉骨茶",
 "taste": "red",
 "health": "red",
 "banned": false,
 "note": "",
-"id": "seed-28-e1tw4",
+"id": "seed-27-26ox3-s1",
+"createdAt": 1787897015131
+},
+{
+"name": "蒸南瓜",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-28-e1tw4-s0",
 "createdAt": 1787896955132
 },
 {
-"name": "銀耳➕桃膠➕燒仙草➕酒釀",
+"name": "醋溜白菜",
+"taste": "red",
+"health": "red",
+"banned": false,
+"note": "",
+"id": "seed-28-e1tw4-s2",
+"createdAt": 1787896955130
+},
+{
+"name": "銀耳",
 "taste": "mid",
 "health": "mid",
 "banned": false,
 "note": "",
-"id": "seed-29-0kj9w",
+"id": "seed-29-0kj9w-s0",
 "createdAt": 1787896895132
+},
+{
+"name": "桃膠",
+"taste": "mid",
+"health": "mid",
+"banned": false,
+"note": "",
+"id": "seed-29-0kj9w-s1",
+"createdAt": 1787896895131
+},
+{
+"name": "燒仙草",
+"taste": "mid",
+"health": "mid",
+"banned": false,
+"note": "",
+"id": "seed-29-0kj9w-s2",
+"createdAt": 1787896895130
+},
+{
+"name": "酒釀",
+"taste": "mid",
+"health": "mid",
+"banned": false,
+"note": "",
+"id": "seed-29-0kj9w-s3",
+"createdAt": 1787896895129
 },
 {
 "name": "整隻烤雞",
@@ -459,22 +720,40 @@
 "createdAt": 1787895695132
 },
 {
-"name": "死麵餅➕奶酪/幹噎酸奶",
+"name": "死麵餅",
 "taste": "red",
 "health": "ink",
 "banned": false,
 "note": "",
-"id": "seed-50-bqka4",
+"id": "seed-50-bqka4-s0",
 "createdAt": 1787895635132
 },
 {
-"name": "香蕉➕花生醬",
+"name": "奶酪/幹噎酸奶",
 "taste": "red",
 "health": "ink",
 "banned": false,
 "note": "",
-"id": "seed-51-hwg3j",
+"id": "seed-50-bqka4-s1",
+"createdAt": 1787895635131
+},
+{
+"name": "香蕉",
+"taste": "red",
+"health": "ink",
+"banned": false,
+"note": "",
+"id": "seed-51-hwg3j-s0",
 "createdAt": 1787895575132
+},
+{
+"name": "花生醬",
+"taste": "red",
+"health": "ink",
+"banned": false,
+"note": "",
+"id": "seed-51-hwg3j-s1",
+"createdAt": 1787895575131
 },
 {
 "name": "漢堡",
