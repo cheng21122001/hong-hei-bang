@@ -3,6 +3,7 @@
 */
 
 import * as store from "./store.js";
+import * as migrate from "./migrate.js";
 import * as sync from "./sync.js";
 import * as board from "./board.js";
 import * as sheet from "./sheet.js";
@@ -69,7 +70,12 @@ sheet.mount({
 
 (async function start() {
   await store.init();
+
+  // 拆合并菜的一次性迁移。拆出来的都标了 dirty，
+  // 随后 sync.init() 的第一次同步会把它们推上云端。
+  const m = migrate.splitCombos();
   paint();
+  if (m) showToast("已把 " + m.combos + " 道合并菜拆成 " + m.added + " 个单品");
 
   account.mount();
   sync.init(paint);

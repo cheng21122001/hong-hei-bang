@@ -91,13 +91,14 @@ function newId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 }
 
-/** 传 id 就是改，不传就是新增。返回这条记录。 */
+/** 传 id 就是改，不传就是新增。返回这条记录。
+    新增时可以指定 createdTs，迁移用得上；平时不传就是此刻。 */
 export function upsert(input) {
   const now = Date.now();
   let row = input.id ? get(input.id) : null;
 
   if (!row) {
-    row = normalize({ id: input.id || newId(), createdTs: now });
+    row = normalize({ id: input.id || newId(), createdTs: input.createdTs || now });
     cache.push(row);
   }
 

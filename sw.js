@@ -5,7 +5,7 @@
    改了任何静态文件，就把 VERSION 加一，否则一直喂旧缓存。
 */
 
-const VERSION = "hhb-v3";
+const VERSION = "hhb-v4";
 
 const ASSETS = [
   "./",
@@ -15,6 +15,7 @@ const ASSETS = [
   "seed.json",
   "js/app.js",
   "js/store.js",
+  "js/migrate.js",
   "js/cloud.js",
   "js/sync.js",
   "js/board.js",
