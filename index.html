@@ -55,35 +55,47 @@
         <p class="field-error" id="name-error">请填写商品名</p>
       </div>
 
-      <div class="mode-review">
-        <div class="field">
-          <div class="rowhead">
-            <label for="s0">评分</label>
-            <button type="button" class="mini" id="btn-avg">综合 = 平均分</button>
-          </div>
+      <!-- 按 field-grouping 分成三组：打分 / 价目 / 结论。
+           评分卡收进 <details>，属于 progressive-disclosure：它是拍完才用的，
+           不该在每次记录时都占掉半屏。 -->
+      <fieldset class="group">
+        <legend>打分</legend>
+        <div class="scores">
           <div class="score"><span class="nm">味　道</span><input type="range" id="s0" min="0" max="5" step="0.5" value="0" aria-label="味道"><span class="val" id="v0">0.0</span></div>
           <div class="score"><span class="nm">量价比</span><input type="range" id="s1" min="0" max="5" step="0.5" value="0" aria-label="量价比"><span class="val" id="v1">0.0</span></div>
           <div class="score"><span class="nm">配料表</span><input type="range" id="s2" min="0" max="5" step="0.5" value="0" aria-label="配料表"><span class="val" id="v2">0.0</span></div>
-          <div class="score total"><span class="nm">综　合</span><input type="range" id="st" min="0" max="5" step="0.1" value="0" aria-label="综合"><span class="val" id="vt">0.0</span></div>
-          <p class="derive-hint" id="derive-hint"></p>
         </div>
-
-        <div class="field">
-          <label>价目</label>
-          <div class="price-row">
-            <input type="number" id="f-total" min="0" step="0.01" inputmode="decimal" placeholder="总价" aria-label="总价">
-            <span class="price-sep">元 /</span>
-            <input type="number" id="f-qty" min="0" step="1" inputmode="decimal" placeholder="数量" aria-label="数量">
-            <input type="text" id="f-unit" maxlength="6" placeholder="罐" aria-label="单位">
-          </div>
-          <div class="unit-price" id="unit-price">
-            <span class="up-label">单价</span>
-            <span class="up-val" id="up-val">—</span>
-          </div>
-          <input type="text" id="f-from" maxlength="40" placeholder="哪买的（选填）" autocomplete="off">
-          <p class="hint">单价自动算；算出来不对（比如买一送一）就点它自己改</p>
+        <div class="score total">
+          <span class="nm">综　合</span>
+          <input type="range" id="st" min="0" max="5" step="0.1" value="0" aria-label="综合">
+          <span class="val" id="vt">0.0</span>
         </div>
+        <div class="group-foot">
+          <p class="hint" id="derive-hint"></p>
+          <button type="button" class="mini" id="btn-avg">取平均分</button>
+        </div>
+      </fieldset>
 
+      <fieldset class="group">
+        <legend>价目</legend>
+        <div class="price-row">
+          <label class="sub" for="f-total">总价<input type="number" id="f-total" min="0" step="0.01" inputmode="decimal" placeholder="0"></label>
+          <label class="sub" for="f-qty">数量<input type="number" id="f-qty" min="0" step="1" inputmode="decimal" placeholder="0"></label>
+          <label class="sub" for="f-unit">单位<input type="text" id="f-unit" maxlength="6" placeholder="罐"></label>
+        </div>
+        <div class="unit-price">
+          <span class="up-label">单价</span>
+          <span class="up-val" id="up-val">—</span>
+          <input type="number" id="f-each" min="0" step="0.01" inputmode="decimal" aria-label="手填单价" hidden>
+          <button type="button" class="mini ghost" id="btn-each">改</button>
+        </div>
+        <label class="sub wide" for="f-from">哪买的
+          <input type="text" id="f-from" maxlength="40" placeholder="选填" autocomplete="off">
+        </label>
+      </fieldset>
+
+      <fieldset class="group">
+        <legend>结论</legend>
         <div class="field">
           <label>回购与否</label>
           <div class="toggle-pair buy-pair" id="toggle-buy">
@@ -93,7 +105,7 @@
         </div>
 
         <div class="field">
-          <label for="f-verdict">一句话结论</label>
+          <label for="f-verdict">一句话</label>
           <input type="text" id="f-verdict" maxlength="28" placeholder="一句话说完，14 字最好看" autocomplete="off">
           <p class="hint">超过 14 字会自动折成两行，最多两行</p>
         </div>
@@ -102,16 +114,16 @@
           <label for="f-date">日期</label>
           <input type="text" id="f-date" placeholder="2026 . 09 . 09" autocomplete="off">
         </div>
+      </fieldset>
 
-        <div class="field card-field">
-          <div class="rowhead">
-            <label>评分卡</label>
-            <button type="button" class="mini" id="btn-png">存成 PNG</button>
-          </div>
-          <canvas id="card-cv" width="1080" height="1920" aria-label="评分卡预览"></canvas>
-          <p class="hint" id="png-done">1080×1920，存出来直接进剪映</p>
+      <details class="card-fold" id="card-fold">
+        <summary>评分卡<span class="sum-hint">1080×1920，进剪映用</span></summary>
+        <canvas id="card-cv" width="1080" height="1920" aria-label="评分卡预览"></canvas>
+        <div class="card-foot">
+          <p class="hint" id="png-done">存出来直接进剪映</p>
+          <button type="button" class="mini" id="btn-png">存成 PNG</button>
         </div>
-      </div>
+      </details>
 
       <div class="field">
         <div class="ban-field">

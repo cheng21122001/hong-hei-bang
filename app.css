@@ -125,7 +125,7 @@
     background: var(--surface-2);
     color: var(--text-muted);
     font: inherit;
-    font-size: 11.5px;
+    font-size: 12px;
     line-height: 1.3;
     white-space: nowrap;
     cursor: pointer;
@@ -137,12 +137,12 @@
   /* ---------- 账号弹层 ---------- */
   .acct-status {
     margin: 0 0 16px;
-    font-size: 13px;
+    font-size: 14px;
     color: var(--text-muted);
   }
   .acct-hint {
     margin: -4px 0 0;
-    font-size: 11.5px;
+    font-size: 12px;
     line-height: 1.6;
     color: var(--text-muted);
   }
@@ -152,7 +152,7 @@
     border-radius: 9px;
     background: color-mix(in srgb, var(--accent-red) 10%, transparent);
     color: var(--accent-red);
-    font-size: 12.5px;
+    font-size: 12px;
     line-height: 1.5;
   }
 
@@ -198,7 +198,7 @@
     background: var(--surface);
     color: var(--text-muted);
     font: inherit;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
     padding: 9px 14px;
     border-radius: 10px;
@@ -239,7 +239,7 @@
   /* 坐标轴：只标三档的名字，轨道跟着格子走，不画箭头不画线 */
   .ax {
     display: grid;
-    font-size: 10.5px;
+    font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.4px;
     color: var(--text-muted);
@@ -303,8 +303,8 @@
     opacity: 0.35;
     margin-bottom: 6px;
   }
-  .empty h2 { font-size: 15px; color: var(--text); margin: 0 0 6px; }
-  .empty p { margin: 0; font-size: 13.5px; }
+  .empty h2 { font-size: 16px; color: var(--text); margin: 0 0 6px; }
+  .empty p { margin: 0; font-size: 14px; }
 
   /* 只有红榜黑榜有名字，跟着那格滚，滚到哪都知道自己在哪 */
   .cell-name {
@@ -319,7 +319,7 @@
     background: var(--heat-bg);
     font-family: "Noto Serif SC", serif;
     font-weight: 900;
-    font-size: 15px;
+    font-size: 16px;
     letter-spacing: 0.5px;
     color: var(--heat-ink);
   }
@@ -328,7 +328,7 @@
   .cell-n {
     font-family: "JetBrains Mono", monospace;
     font-weight: 500;
-    font-size: 10.5px;
+    font-size: 12px;
     opacity: 0.55;
   }
   .cell-n.solo {
@@ -357,7 +357,7 @@
     background: transparent;
     color: var(--heat-ink);
     font: inherit;
-    font-size: 13.5px;
+    font-size: 14px;
     font-weight: 500;
     line-height: 1.45;
     letter-spacing: 0.2px;
@@ -427,14 +427,14 @@
 
   .sheet h3 {
     font-family: "Noto Serif SC", serif;
-    font-size: 19px;
+    font-size: 20px;
     margin: 0 0 16px;
   }
 
   .field { margin-bottom: 16px; }
   .field label {
     display: block;
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--text-muted);
     margin-bottom: 6px;
@@ -444,29 +444,33 @@
   .field input[type="password"],
   .field textarea {
     width: 100%;
+    min-height: 44px;          /* 触控下限 */
     padding: 10px 12px;
     border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--surface-2);
     color: var(--text);
     font: inherit;
-    font-size: 15px;
+    /* 16px 是硬下限：再小 iOS 一聚焦就把整页放大 */
+    font-size: 16px;
     resize: vertical;
   }
-  .field textarea { min-height: 56px; font-size: 14px; }
+  .field textarea { min-height: 72px; }
 
   .toggle-pair { display: flex; gap: 8px; }
   .toggle-pair button {
     flex: 1;
-    padding: 11px 8px;
+    min-height: 48px;
+    padding: 12px 8px;
     border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--surface-2);
     color: var(--text-muted);
     font: inherit;
-    font-size: 13.5px;
+    font-size: 14px;
     font-weight: 500;
     cursor: pointer;
+    touch-action: manipulation;
   }
   .toggle-pair button.on.red { background: var(--accent-red); border-color: var(--accent-red); color: var(--accent-red-contrast); }
   .toggle-pair button.on.mid { background: var(--surface); border-color: var(--border-strong); color: var(--text); box-shadow: inset 0 0 0 1px var(--border-strong); }
@@ -477,13 +481,14 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    min-height: 56px;
     padding: 10px 12px;
     border-radius: 10px;
     background: var(--surface-2);
     border: 1px solid var(--border);
   }
-  .ban-field p { margin: 0; font-size: 13px; }
-  .ban-field span { display: block; font-size: 11.5px; color: var(--text-muted); margin-top: 1px; }
+  .ban-field p { margin: 0; font-size: 14px; }
+  .ban-field span { display: block; font-size: 12px; color: var(--text-muted); margin-top: 2px; }
   .ban-switch {
     flex: none;
     width: 44px;
@@ -511,15 +516,17 @@
   .sheet-actions { display: flex; gap: 10px; margin-top: 20px; }
   .btn {
     flex: 1;
+    min-height: 48px;
     padding: 12px;
     border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--surface-2);
     color: var(--text);
     font: inherit;
-    font-size: 14.5px;
+    font-size: 16px;
     font-weight: 700;
     cursor: pointer;
+    touch-action: manipulation;
   }
   .btn.primary { background: var(--accent-red); border-color: var(--accent-red); color: var(--accent-red-contrast); }
   .btn:disabled { opacity: 0.55; cursor: wait; }
@@ -530,13 +537,13 @@
     background: transparent;
     color: var(--text-muted);
     font: inherit;
-    font-size: 13px;
-    padding: 6px 10px;
+    font-size: 14px;
+    padding: 8px 12px;
     cursor: pointer;
   }
   .delete-link.confirm { color: var(--accent-red-contrast); background: var(--accent-red); border-radius: 8px; font-weight: 700; }
 
-  .field-error { color: var(--accent-red); font-size: 12.5px; margin-top: 6px; display: none; }
+  .field-error { color: var(--accent-red); font-size: 12px; margin-top: 4px; display: none; }
   .field-error.show { display: block; }
 
   :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
@@ -551,7 +558,7 @@
     color: var(--accent-ink-contrast);
     padding: 10px 18px;
     border-radius: 100px;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
     box-shadow: var(--shadow);
     opacity: 0;
@@ -565,105 +572,221 @@
   }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-  /* ---------- 零食测评的表单 ---------- */
-  .rowhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
-  .rowhead label { margin-bottom: 0; }
-  .mini {
-    flex: none;
-    padding: 5px 10px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--surface-2);
-    color: var(--text-muted);
-    font: inherit;
-    font-size: 12px;
-    cursor: pointer;
+  /* ==========================================================
+     测评表单
+     字号只用这套音阶：12 / 14 / 16 / 20 / 28
+     间距只用这套音阶：4 / 8 / 12 / 16 / 24
+     输入框一律 16px 字、≥44px 高——低于 16px 时 iOS 一聚焦就整页放大。
+     ========================================================== */
+
+  /* ---------- 分组 ---------- */
+  .group {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 0 0 16px;
+    padding: 16px 0 0;
+    min-width: 0;             /* fieldset 默认 min-width:min-content，会撑破弹层 */
   }
-  .mini:hover { border-color: var(--border-strong); color: var(--text); }
-  .mini:disabled { opacity: 0.5; cursor: wait; }
-
-  .score { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
-  .score .nm { flex: none; width: 52px; font-size: 13.5px; font-weight: 700; }
-  .score input[type="range"] { flex: 1; min-width: 0; height: 22px; accent-color: var(--accent-red); }
-  .score .val { flex: none; width: 34px; text-align: right; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
-  .score.total { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
-  .score.total .nm { color: var(--accent-red); }
-
-  .derive-hint { font-size: 11.5px; color: var(--text-muted); margin: 10px 0 0; }
-  .hint { font-size: 11.5px; color: var(--text-muted); margin: 6px 0 0; }
-  .hint.ok { color: var(--accent-red); font-weight: 500; }
-
-  .buy-pair button.on.yes { background: #16A34A; border-color: #16A34A; color: #fff; }
-  .buy-pair button.on.no { background: var(--accent-red); border-color: var(--accent-red); color: var(--accent-red-contrast); }
-
-  /* 预览和导出是同一段画法，所以看到的就是存出来的 */
-  .card-field canvas {
-    display: block;
-    width: 168px;
-    height: 298px;
-    margin-top: 4px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: #FFFBEB;
-  }
-
-  /* 每条挂一个综合分 */
-  .tag-score {
-    margin-left: 5px;
-    padding: 0 4px;
-    border-radius: 5px;
-    background: color-mix(in srgb, #F59E0B 26%, transparent);
-    color: inherit;
-    font-size: 0.82em;
+  .group > legend {
+    padding: 0 8px 0 0;
+    font-family: "Noto Serif SC", serif;
+    font-size: 14px;
     font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    vertical-align: baseline;
+    color: var(--text);
   }
+  .group .field:last-child { margin-bottom: 0; }
 
-
-  /* ---------- 价目 ---------- */
-  .price-row { display: flex; align-items: center; gap: 8px; }
-  .price-row input[type="number"] { width: 0; flex: 1 1 0; min-width: 0; }
-  .price-row #f-unit { width: 62px; flex: none; text-align: center; }
-  .price-row input {
+  /* 一行一个小标题 + 输入框；标题常驻，不靠 placeholder 当标签 */
+  .sub {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .sub input {
+    width: 100%;
+    min-height: 44px;
     padding: 10px 12px;
     border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--surface-2);
     color: var(--text);
     font: inherit;
-    font-size: 15px;
+    font-size: 16px;
   }
-  .price-sep { flex: none; font-size: 13px; color: var(--text-muted); }
+  .sub.wide { margin-top: 12px; }
+
+  /* ---------- 打分 ---------- */
+  .scores { display: flex; flex-direction: column; gap: 4px; }
+  .score {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;          /* 滑块本身细，靠行高把命中区撑到 44 */
+  }
+  .score .nm { flex: none; width: 56px; font-size: 14px; font-weight: 700; }
+  .score input[type="range"] {
+    flex: 1;
+    min-width: 0;
+    height: 44px;              /* 命中区，视觉轨道由 ::-webkit-slider-runnable-track 控制 */
+    accent-color: var(--accent-red);
+    background: transparent;
+    cursor: pointer;
+  }
+  .score .val {
+    flex: none;
+    width: 40px;
+    text-align: right;
+    font-size: 16px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .score.total {
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .score.total .nm { color: var(--accent-red); }
+  .score.total .val { font-size: 20px; color: var(--accent-red); }
+
+  .group-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .group-foot .hint { margin: 0; flex: 1; }
+
+  /* ---------- 价目 ---------- */
+  .price-row { display: flex; gap: 8px; }
+  .price-row .sub { flex: 1 1 0; min-width: 0; }
+  .price-row .sub:last-child { flex: 0 0 72px; }
 
   /* 单价单独拎出来，因为「量价比」那一分看的就是它 */
   .unit-price {
     display: flex;
-    align-items: baseline;
-    gap: 10px;
-    margin: 10px 0 8px;
-    padding: 9px 12px;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+    padding: 8px 8px 8px 14px;
+    min-height: 44px;
     border-radius: 10px;
     background: color-mix(in srgb, var(--accent-red) 8%, transparent);
     border: 1px solid color-mix(in srgb, var(--accent-red) 22%, transparent);
   }
-  .up-label { flex: none; font-size: 12.5px; color: var(--text-muted); letter-spacing: .06em; }
+  .up-label { flex: none; font-size: 12px; color: var(--text-muted); letter-spacing: .06em; }
   .up-val {
-    font-size: 19px;
+    flex: 1;
+    font-size: 20px;
     font-weight: 700;
     color: var(--text-muted);
     font-variant-numeric: tabular-nums;
-    cursor: pointer;
   }
   .up-val.has { color: var(--accent-red); }
-  /* 手改过的加一道下划线，跟自动算的区分开 */
-  .up-val.manual { text-decoration: underline dotted; text-underline-offset: 3px; }
+  /* 手填的加一道点下划线，跟自动算的区分开 */
+  .up-val.manual { text-decoration: underline dotted; text-underline-offset: 4px; }
+  #f-each {
+    flex: 1;
+    min-width: 0;
+    min-height: 36px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--accent-red);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  /* ---------- 小按钮 ---------- */
+  .mini {
+    flex: none;
+    min-height: 36px;
+    padding: 8px 14px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text-muted);
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: border-color .15s ease, color .15s ease;
+  }
+  /* 视觉上 36–39px 就够（它们是辅助操作，做成 44 会喧宾夺主），
+     用伪元素把命中区外扩到 44——touch-target-size 允许命中区大于视觉边界 */
+  .mini { position: relative; }
+  .mini::after {
+    content: "";
+    position: absolute;
+    inset: -4px -2px;
+    min-height: 44px;
+  }
+  .mini:hover { border-color: var(--border-strong); color: var(--text); }
+  .mini:disabled { opacity: 0.45; cursor: wait; }
+  .mini.ghost { background: transparent; }
+
+  /* ---------- 评分卡：收起来，要用再展开 ---------- */
+  .card-fold {
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+  .card-fold > summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    font-family: "Noto Serif SC", serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+    touch-action: manipulation;
+  }
+  .card-fold > summary::-webkit-details-marker { display: none; }
+  .card-fold > summary::after {
+    content: "";
+    width: 7px; height: 7px;
+    border-right: 1.5px solid var(--text-muted);
+    border-bottom: 1.5px solid var(--text-muted);
+    transform: rotate(45deg);
+    transition: transform .15s ease;
+  }
+  .card-fold[open] > summary::after { transform: rotate(-135deg); }
+  .sum-hint { flex: 1; font-family: inherit; font-size: 12px; font-weight: 400; color: var(--text-muted); }
+  .card-fold canvas {
+    display: block;
+    width: 168px;
+    height: 298px;
+    margin-top: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #FFFBEB;
+  }
+  .card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .card-foot .hint { margin: 0; flex: 1; }
+
+  /* ---------- 提示文字 ---------- */
+  .hint { font-size: 12px; color: var(--text-muted); margin: 4px 0 0; }
+  .hint.ok { color: var(--accent-red); font-weight: 500; }
+
+  .buy-pair button.on.yes { background: #15803d; border-color: #15803d; color: #fff; }
+  .buy-pair button.on.no { background: var(--accent-red); border-color: var(--accent-red); color: var(--accent-red-contrast); }
 
   /* ---------- 待评分 ---------- */
   /* 两条轴缺任一个分数就排这儿，不进格子——没打分的东西摆进某一格等于替她判断 */
   .pending {
-    margin-bottom: 14px;
-    padding: 12px 14px;
+    margin-bottom: 16px;
+    padding: 12px 16px;
     border-radius: 12px;
     border: 1px dashed var(--border-strong);
     background: var(--surface-2);
@@ -671,8 +794,20 @@
   .pending h2 {
     margin: 0;
     font-family: "Noto Serif SC", serif;
-    font-size: 14.5px;
+    font-size: 14px;
     color: var(--text-muted);
   }
-  .pending-why { margin: 2px 0 8px; font-size: 11.5px; color: var(--text-muted); }
+  .pending-why { margin: 4px 0 8px; font-size: 12px; color: var(--text-muted); }
   .pending .tag { border-left-color: var(--border-strong); color: var(--text); }
+
+  /* ---------- 榜上的综合分 ---------- */
+  .tag-score {
+    margin-left: 4px;
+    padding: 0 4px;
+    border-radius: 5px;
+    background: color-mix(in srgb, #F59E0B 26%, transparent);
+    color: inherit;
+    font-size: 0.82em;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }

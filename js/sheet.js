@@ -48,6 +48,9 @@ export function mount(handlers) {
   el.unit = document.getElementById("f-unit");
   el.from = document.getElementById("f-from");
   el.upVal = document.getElementById("up-val");
+  el.each = document.getElementById("f-each");
+  el.eachBtn = document.getElementById("btn-each");
+  el.cardFold = document.getElementById("card-fold");
   el.verdict = document.getElementById("f-verdict");
   el.date = document.getElementById("f-date");
   el.deriveHint = document.getElementById("derive-hint");
@@ -65,16 +68,32 @@ export function mount(handlers) {
   [el.total_, el.qty, el.unit].forEach(n =>
     n.addEventListener("input", () => { eachOverride = null; paintUnitPrice(); }));
 
-  // 单价算出来不对（买一送一、赠品之类）就点一下自己改
-  el.upVal.addEventListener("click", () => {
-    const now = currentEach();
-    const typed = window.prompt("单价填多少？留空就回到自动算", now == null ? "" : String(round2(now)));
-    if (typed === null) return;
-    const t = typed.trim();
-    if (!t) { eachOverride = null; paintUnitPrice(); return; }
-    const n = Number(t);
-    eachOverride = isFinite(n) && n >= 0 ? n : null;
-    paintUnitPrice();
+  // 单价算出来不对（买一送一、赠品之类）就地改，不弹 prompt
+  el.eachBtn.addEventListener("click", () => {
+    if (el.each.hidden) {
+      const now = currentEach();
+      el.each.value = now == null ? "" : round2(now);
+      el.each.hidden = false;
+      el.upVal.hidden = true;
+      el.eachBtn.textContent = "自动";
+      el.each.focus();
+      el.each.select();
+    } else {
+      eachOverride = null;              // 「自动」= 退回总价÷数量
+      el.each.value = "";
+      closeEachEdit();
+      paintUnitPrice();
+    }
+  });
+
+  el.each.addEventListener("input", () => {
+    const v = el.each.value.trim();
+    const n = Number(v);
+    eachOverride = v && isFinite(n) && n >= 0 ? n : null;
+  });
+  el.each.addEventListener("blur", () => { closeEachEdit(); paintUnitPrice(); });
+  el.each.addEventListener("keydown", e => {
+    if (e.key === "Enter") { e.preventDefault(); el.each.blur(); }
   });
 
   el.banned.addEventListener("click", () => {
@@ -178,6 +197,12 @@ function currentEach() {
   return unitPrice(readPrice());
 }
 
+function closeEachEdit() {
+  el.each.hidden = true;
+  el.upVal.hidden = false;
+  el.eachBtn.textContent = "改";
+}
+
 function paintUnitPrice() {
   const each = currentEach();
   const unit = el.unit.value.trim();
@@ -189,6 +214,7 @@ function paintUnitPrice() {
   el.upVal.textContent = round2(each) + " 元" + (unit ? " / " + unit : "");
   el.upVal.classList.add("has");
   el.upVal.classList.toggle("manual", eachOverride != null);
+  el.eachBtn.textContent = el.each.hidden ? "改" : "自动";
 }
 
 
@@ -227,9 +253,11 @@ function refreshCard() {
   s.forEach((v, i) => { el.vals[i].textContent = v.toFixed(1); });
   el.totalVal.textContent = (parseFloat(el.total.value) || 0).toFixed(1);
 
-  el.deriveHint.textContent =
-    "会落在榜上：" + AXIS_LABEL.taste[deriveAxis(s[0])] +
-    " × " + AXIS_LABEL.health[deriveAxis(s[2])] + "（配料表算健康这一轴）";
+  // 味道和配料表定两条轴。缺任一个就还没有位置——这时候报一个格子出来
+  // 等于替她判断，所以照实说「排在待评分」，跟 board.js 的规则对齐。
+  el.deriveHint.textContent = (s[0] > 0 && s[2] > 0)
+    ? "会落在：" + AXIS_LABEL.taste[deriveAxis(s[0])] + " × " + AXIS_LABEL.health[deriveAxis(s[2])]
+    : "味道和配料表都打了分才排得进榜，现在归「待评分」";
 
   el.pngDone.textContent = "1080×1920，存出来直接进剪映";
   el.pngDone.classList.remove("ok");
@@ -263,7 +291,9 @@ export function open(item) {
   el.unit.value = pr ? (pr.unit || "") : "";
   el.from.value = pr ? (pr.from || "") : "";
   eachOverride = pr && pr.each != null ? pr.each : null;
+  closeEachEdit();
   paintUnitPrice();
+  el.cardFold.open = false;      // 每次打开都收起评分卡，先记录、要用再展开
 
   el.verdict.value = rv ? rv.verdict : "";
   el.date.value = rv ? rv.date : card.today();
