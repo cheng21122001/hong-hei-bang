@@ -187,3 +187,67 @@ export function backfillPrices() {
   try { localStorage.setItem(LS_PRICED, "2"); } catch (e) {}
   return filled || null;
 }
+
+/* ================= 再补两期：只有部分分数的那两条 ================= */
+
+const LS_SEEDED2 = "hhb_migrated_seed_reviews_2";
+
+/**
+ * 2026-09-09：9/5 芥辣薯片和 9/6 十蔬米饼也建成记录。
+ *
+ * 这两期片尾没有完整评分卡，所以**只填片子里真出现过的数**，其余留 0 等她自己拉：
+ * - 芥辣薯片：她说「这款只能给到三星」→ 味道 3.0。量价比/配料表/综合/回购都没说。
+ *   新加坡中超买的，没报价，所以 total/qty 留空，渠道照记。
+ * - 十蔬米饼：她说「个人评分4.5。回购！」→ 综合 4.5、回购。三个分项都没说。
+ *   价格她自己都说「忘记价格了」，那就一个数都不填，原话进渠道那格。
+ *
+ * 一句话结论用她的原字幕，没改写。
+ * 留 0 的那几维会让这两条暂时落在榜的左下角——这是「还没打分」的样子，不是判断。
+ *
+ * @returns {number|null} 补录的条数；已经跑过就返回 null
+ */
+export function seedReviews2() {
+  try { if (localStorage.getItem(LS_SEEDED2) === "1") return null; } catch (e) { return null; }
+
+  const rows = [
+    {
+      id: "ep-20260905-wasabi",
+      name: "乐事清新芥辣味薯片",
+      createdTs: Date.parse("2026-09-05T12:00:00+08:00"),
+      review: {
+        s: [3.0, 0, 0],           // 只有味道有：「这款只能给到三星」
+        total: 0, buy: null,
+        price: { total: null, qty: null, unit: "袋", each: null, from: "新加坡中超" },
+        verdict: "NPC", date: "2026 . 09 . 05"
+      }
+    },
+    {
+      id: "ep-20260906-shishu",
+      name: "盼盼十蔬米饼",
+      createdTs: Date.parse("2026-09-06T12:00:00+08:00"),
+      review: {
+        s: [0, 0, 0],             // 三个分项她都没单独说
+        total: 4.5, buy: true,    // 「个人评分4.5。回购！」
+        price: { total: null, qty: null, unit: "袋", each: null, from: "忘记价格了，国内一袋大概十几块" },
+        verdict: "黄瓜味很浓，很清香，超级夏天的感觉", date: "2026 . 09 . 06"
+      }
+    }
+  ];
+
+  let added = 0;
+  for (const r of rows) {
+    if (store.get(r.id)) continue;
+    store.upsert({
+      id: r.id,
+      name: r.name,
+      createdTs: r.createdTs,
+      banned: false,
+      note: r.review.verdict,
+      review: r.review
+    });
+    added++;
+  }
+
+  try { localStorage.setItem(LS_SEEDED2, "1"); } catch (e) {}
+  return added || null;
+}

@@ -5,6 +5,10 @@
 
    右上角是红榜（好吃+健康），左下角是黑榜（踩雷+不健康），
    中间七格按离这两个角的远近渐变，墨色从朱红过渡到浓墨。
+
+   两条轴分别由「味道」和「配料表」两个分数定位，所以**缺任一个分数的条目
+   不进格子**，单独排在榜上面的「待评分」里——把没打分的东西摆进某一格，
+   等于替她做了判断。补录已发过的片子时最容易撞上这种：那几期只报了综合分。
 */
 
 // 列：左 → 右，口味由差到好
@@ -36,13 +40,21 @@ function displayName(s) {
  * @param {Array} items 全部（未过滤）测评
  * @param {{q:string, banOnly:boolean}} filters
  */
+/** 两条轴的分数齐了才有位置。缺一个都算没打完。 */
+function isScored(i) {
+  const s = i.review && i.review.s;
+  return !!(s && s[0] > 0 && s[2] > 0);
+}
+
 export function render(board, items, filters) {
   const q = filters.q.trim().toLowerCase();
-  const pool = items.filter(i => {
+  const matched = items.filter(i => {
     if (filters.banOnly && !i.banned) return false;
     if (q && i.name.toLowerCase().indexOf(q) === -1) return false;
     return true;
   });
+  const pool = matched.filter(isScored);
+  const pending = matched.filter(i => !isScored(i));
 
   if (items.length === 0) {
     board.innerHTML =
@@ -50,12 +62,22 @@ export function render(board, items, filters) {
       '<h2>还没有测评</h2><p>点右下角的「+」，记下第一件零食吧。</p></div>';
     return;
   }
-  if (pool.length === 0) {
+  if (pool.length === 0 && pending.length === 0) {
     board.innerHTML =
       '<div class="empty"><div class="empty-mark">？</div>' +
       '<h2>没有符合条件的</h2><p>试试换个搜索词，或取消「只看拉黑」。</p></div>';
     return;
   }
+
+  // 待评分的排在榜上面。点进去把味道和配料表拉一下，它就自己归位了。
+  const pendingHtml = pending.length
+    ? '<section class="pending"><h2>待评分<span class="cell-n">' + pending.length + '</span></h2>' +
+      '<p class="pending-why">味道和配料表两个分数齐了才排得进榜</p>' +
+      '<div class="tag-wrap">' + pending.map(i =>
+        '<button type="button" class="tag" data-id="' + escapeHtml(i.id) + '" title="' +
+        escapeHtml(i.name) + '">' + displayName(i.name) + '</button>').join("") +
+      '</div></section>'
+    : "";
 
   // 行高列宽按菜数分配：菜多的地方宽出来，空的地方细下去。
   // 但每条轨道有像素下限，否则窄的那一列只剩「銀…」「桃…」，等于没有。
@@ -103,7 +125,9 @@ export function render(board, items, filters) {
     (cls === "ax-y" ? "rows" : "columns") + ':' + t + '">' +
     labels.map(l => '<span>' + l + '</span>').join("") + '</div>';
 
-  board.innerHTML =
+  if (pool.length === 0) { board.innerHTML = pendingHtml; return; }
+
+  board.innerHTML = pendingHtml +
     '<div class="chart">' +
     axis(HEALTHS.map(h => HEALTH_LABEL[h]), rowTracks, "ax-y") +
     '<div class="grid9" style="grid-template-columns:' + colTracks +

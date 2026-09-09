@@ -658,3 +658,21 @@
   .up-val.has { color: var(--accent-red); }
   /* 手改过的加一道下划线，跟自动算的区分开 */
   .up-val.manual { text-decoration: underline dotted; text-underline-offset: 3px; }
+
+  /* ---------- 待评分 ---------- */
+  /* 两条轴缺任一个分数就排这儿，不进格子——没打分的东西摆进某一格等于替她判断 */
+  .pending {
+    margin-bottom: 14px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px dashed var(--border-strong);
+    background: var(--surface-2);
+  }
+  .pending h2 {
+    margin: 0;
+    font-family: "Noto Serif SC", serif;
+    font-size: 14.5px;
+    color: var(--text-muted);
+  }
+  .pending-why { margin: 2px 0 8px; font-size: 11.5px; color: var(--text-muted); }
+  .pending .tag { border-left-color: var(--border-strong); color: var(--text); }

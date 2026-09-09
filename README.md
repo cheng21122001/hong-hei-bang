@@ -33,7 +33,7 @@ seed-家常菜-备份.json  合并前那 188 条家常菜，只作备份，代�
 js/store.js           本地存储，唯一的显示来源
 js/cloud.js           Supabase 账号与读写
 js/sync.js            什么时候同步、怎么合并
-js/board.js           3×3 榜单渲染
+js/board.js           3×3 榜单渲染 + 待评分
 js/sheet.js           添加/编辑弹层
 js/card.js            评分卡：画 1080×1920 的 canvas 并存成 PNG
 js/migrate.js         一次性数据迁移
@@ -61,6 +61,10 @@ sw.js                 离线缓存
 评分存在 `dishes.review` 这个 jsonb 列里：
 `{ s:[味道,量价比,配料表], total, buy, verdict, date }`。
 用 jsonb 而不是拆成四五个列，是为了以后加评分维度（比如「惊喜感」）不用再改表。
+
+榜上两条轴由「味道」和「配料表」两个分数定位，所以**缺任一个分数的条目不进格子**，
+单独排在榜上面的「待评分」里——把没打分的东西摆进某一格，等于替她做了判断。
+补录已发过的片子时最容易撞上：有几期只报了综合分。
 
 `review.price` 是价目：`{ total 总价, qty 数量, unit 单位, each 单价, from 渠道 }`。
 `each` 留空就用 `total/qty` 现算——**「量价比」那一分看的就是单价**，所以它在表单里
