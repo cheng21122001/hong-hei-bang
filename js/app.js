@@ -75,6 +75,7 @@ sheet.mount({
   const m = migrate.splitCombos();
   const dropped = migrate.dropDishes();
   const seeded = migrate.seedReviews();
+  migrate.backfillPrices();
   paint();
   if (seeded) showToast("已补录 " + seeded + " 期拍过的测评");
   else if (dropped) showToast("已清掉 " + dropped + " 条家常菜，只留零食测评");

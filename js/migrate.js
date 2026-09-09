@@ -112,14 +112,14 @@ export function seedReviews() {
       name: "佳必可沙丁鱼罐头",
       createdTs: Date.parse("2026-09-02T12:00:00+08:00"),
       review: { s: [2.5, 2.5, 3.0], total: 2.5, buy: false,
-                verdict: "这价格不值", date: "2026 . 09 . 02" }
+                price: "PDD 56块6罐，一罐9块3", verdict: "这价格不值", date: "2026 . 09 . 02" }
     },
     {
       id: "ep-20260908-yuntui",
       name: "潘祥记云腿月饼",
       createdTs: Date.parse("2026-09-08T12:00:00+08:00"),
       review: { s: [2.5, 3.0, 1.0], total: 2.2, buy: false,
-                verdict: "馅料问题", date: "2026 . 09 . 08" }
+                price: "实付26元到手8个，一个3块25", verdict: "馅料问题", date: "2026 . 09 . 08" }
     }
   ];
 
@@ -139,4 +139,43 @@ export function seedReviews() {
 
   try { localStorage.setItem(LS_SEEDED_REVIEWS, "1"); } catch (e) {}
   return added || null;
+}
+
+/* ================= 给已经补录过的那两期填上价目 ================= */
+
+const LS_PRICED = "hhb_migrated_backfill_prices";
+
+/**
+ * 2026-09-09 加「价目」字段时，seedReviews() 可能已经在某台设备上跑过了，
+ * 那两条就没带上价目。这里单独补一次。
+ *
+ * 只填空、不覆盖：她要是自己写过价目了，这里一个字都不动。
+ * 价目同样来自成片里的字幕，不是我算的。
+ *
+ * @returns {number|null} 填上的条数；已经跑过或没得填就返回 null
+ */
+export function backfillPrices() {
+  try { if (localStorage.getItem(LS_PRICED) === "1") return null; } catch (e) { return null; }
+
+  const prices = {
+    "ep-20260902-sardine": "PDD 56块6罐，一罐9块3",
+    "ep-20260908-yuntui": "实付26元到手8个，一个3块25"
+  };
+
+  let filled = 0;
+  for (const id of Object.keys(prices)) {
+    const row = store.get(id);
+    if (!row || !row.review || row.review.price) continue;   // 没有、或她已经写过，都跳过
+    store.upsert({
+      id: row.id,
+      name: row.name,
+      banned: row.banned,
+      note: row.note,
+      review: Object.assign({}, row.review, { price: prices[id] })
+    });
+    filled++;
+  }
+
+  try { localStorage.setItem(LS_PRICED, "1"); } catch (e) {}
+  return filled || null;
 }

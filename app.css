@@ -619,3 +619,33 @@
     font-variant-numeric: tabular-nums;
     vertical-align: baseline;
   }
+
+  /* ---------- 价目截图 ---------- */
+  .shot-box {
+    border: 1px dashed var(--border-strong);
+    border-radius: 10px;
+    background: var(--surface-2);
+    min-height: 92px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .shot-box img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 260px;
+    object-fit: contain;
+    cursor: pointer;
+  }
+  .shot-empty {
+    margin: 0;
+    padding: 18px 14px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+  .shot-actions { display: flex; gap: 8px; margin-top: 8px; }
+  .mini.danger { color: var(--accent-red); border-color: color-mix(in srgb, var(--accent-red) 40%, transparent); }
+  .hint.bad { color: var(--accent-red); }

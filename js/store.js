@@ -7,7 +7,7 @@
    一条记录：
    { id, name, taste:"red"|"mid"|"ink", health:同上, banned, note,
      createdTs, editedTs?, deleted?, dirty?, seeded?,
-     review?: { s:[味道,量价比,配料表], total, buy:true|false|null, verdict, date } }
+     review?: { s:[味道,量价比,配料表], total, buy:true|false|null, price, shot, verdict, date } }
 
    - taste / health 是它在榜上的坐标，一律存在，粗判细判都有。
    - review 是小熊测评那套细分：只有商品测评有，家常菜是 null。
@@ -63,6 +63,10 @@ function normalizeReview(rv) {
     s: [num(s[0]), num(s[1]), num(s[2])],
     total: num(rv.total),
     buy: rv.buy === true ? true : rv.buy === false ? false : null,
+    // 价目是自由文本：「56块6罐，一罐9块3」这种说法固定不成总价/数量/单价三个格子
+    price: String(rv.price || "").slice(0, 60),
+    // 价目截图只存路径，图本身在 Supabase Storage，见 shots.js
+    shot: String(rv.shot || ""),
     verdict: String(rv.verdict || "").slice(0, 28),
     date: String(rv.date || "")
   };

@@ -8,12 +8,19 @@
 
 import { deriveAxis } from "./store.js";
 import * as card from "./card.js";
+import * as shots from "./shots.js";
 
 const el = {};
 let deleteArm = false;
 let onSave = null;
 let onDelete = null;
 let buy = null;        // true | false | null——不预选，等她自己表态
+
+/* 价目截图。pendingFile 是这次选了还没保存的那张：
+   保存时才真上传，取消就当没发生过，不留云上垃圾。 */
+let shotPath = "";
+let pendingFile = null;
+let openedShot = "";    // 打开这条时它原来的图，用来判断她是不是摘掉了
 
 const AXIS_LABEL = {
   taste: { red: "好吃", mid: "一般", ink: "踩雷" },
@@ -31,6 +38,7 @@ export function mount(handlers) {
   el.name = document.getElementById("f-name");
   el.nameError = document.getElementById("name-error");
   el.banned = document.getElementById("toggle-banned");
+  el.saveBtn = document.getElementById("save-btn");
   el.cancelBtn = document.getElementById("cancel-btn");
   el.deleteRow = document.getElementById("delete-row");
   el.deleteBtn = document.getElementById("delete-btn");
@@ -41,6 +49,15 @@ export function mount(handlers) {
   el.totalVal = document.getElementById("vt");
   el.avgBtn = document.getElementById("btn-avg");
   el.buy = document.getElementById("toggle-buy");
+  el.price = document.getElementById("f-price");
+  el.shotInput = document.getElementById("f-shot");
+  el.shotImg = document.getElementById("shot-img");
+  el.shotEmpty = document.getElementById("shot-empty");
+  el.shotActions = document.getElementById("shot-actions");
+  el.shotHint = document.getElementById("shot-hint");
+  el.shotBtn = document.getElementById("btn-shot");
+  el.shotOpen = document.getElementById("btn-shot-open");
+  el.shotDel = document.getElementById("btn-shot-del");
   el.verdict = document.getElementById("f-verdict");
   el.date = document.getElementById("f-date");
   el.deriveHint = document.getElementById("derive-hint");
@@ -53,6 +70,40 @@ export function mount(handlers) {
     if (!btn) return;
     const v = btn.getAttribute("data-val") === "1";
     setBuy(buy === v ? null : v);   // 再点一下取消，回到「还没表态」
+  });
+
+  el.shotBtn.addEventListener("click", () => el.shotInput.click());
+  el.shotBox_click = el.shotImg.addEventListener("click", () => el.shotInput.click());
+
+  el.shotInput.addEventListener("change", async () => {
+    const file = el.shotInput.files && el.shotInput.files[0];
+    el.shotInput.value = "";                 // 清掉，选同一张图也能再触发
+    if (!file) return;
+    try {
+      // 先压再预览：她看到的就是将来存下来的那张，不是原图
+      const small = await shots.shrink(file);
+      pendingFile = small;
+      showShot(URL.createObjectURL(small));
+      el.shotHint.textContent = "保存后才真正上传 · " + Math.round(small.size / 1024) + "KB";
+      el.shotHint.classList.remove("bad");
+    } catch (e) {
+      el.shotHint.textContent = String(e && e.message ? e.message : e);
+      el.shotHint.classList.add("bad");
+    }
+  });
+
+  el.shotOpen.addEventListener("click", () => {
+    const src = el.shotImg.getAttribute("src");
+    if (src) window.open(src, "_blank", "noopener");
+  });
+
+  el.shotDel.addEventListener("click", () => {
+    // 只从这条记录上摘掉；云上那张等保存时再删，取消就还留着
+    pendingFile = null;
+    shotPath = "";
+    showShot(null);
+    el.shotHint.textContent = "保存后生效";
+    el.shotHint.classList.remove("bad");
   });
 
   el.banned.addEventListener("click", () => {
@@ -98,7 +149,7 @@ export function mount(handlers) {
     }
   });
 
-  el.form.addEventListener("submit", e => {
+  el.form.addEventListener("submit", async e => {
     e.preventDefault();
     const name = el.name.value.trim();
     if (!name) {
@@ -107,8 +158,30 @@ export function mount(handlers) {
       return;
     }
 
+    // 图要先传上去才知道路径。传不成就停在这儿，别把记录存成指向不存在的图。
+    const id = el.editId.value || newLocalId();
+    const hadShot = openedShot;
+    if (pendingFile) {
+      el.saveBtn.disabled = true;
+      el.saveBtn.textContent = "传图中…";
+      try {
+        shotPath = await shots.upload(id, pendingFile);
+        pendingFile = null;
+      } catch (err) {
+        el.shotHint.textContent = String(err && err.message ? err.message : err);
+        el.shotHint.classList.add("bad");
+        el.saveBtn.disabled = false;
+        el.saveBtn.textContent = "保存";
+        return;
+      }
+      el.saveBtn.disabled = false;
+      el.saveBtn.textContent = "保存";
+    } else if (hadShot && !shotPath) {
+      shots.remove(hadShot);                 // 她把图摘了，云上那张也清掉
+    }
+
     onSave({
-      id: el.editId.value || null,
+      id,
       name,
       banned: el.banned.getAttribute("data-value") === "1",
       // 一句话结论同时当备注，榜上悬停就能看见，不用另填一遍
@@ -117,6 +190,8 @@ export function mount(handlers) {
         s: readScores(),
         total: parseFloat(el.total.value),
         buy,
+        price: el.price.value.trim(),
+        shot: shotPath,
         verdict: el.verdict.value.trim(),
         date: el.date.value.trim()
       }
@@ -129,6 +204,22 @@ export function mount(handlers) {
 
 function readScores() {
   return el.scores.map(n => parseFloat(n.value) || 0);
+}
+
+/** 新记录的 id 要在保存前就定下来——截图的路径里带着它 */
+function newLocalId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+/** 传 src 就显示图，传 null 就回到空状态 */
+function showShot(src) {
+  const has = !!src;
+  if (has) el.shotImg.setAttribute("src", src);
+  else el.shotImg.removeAttribute("src");
+  el.shotImg.hidden = !has;
+  el.shotEmpty.hidden = has;
+  el.shotActions.hidden = !has;
+  el.shotBtn.textContent = has ? "换一张" : "选图";
 }
 
 function setBuy(v) {
@@ -196,6 +287,31 @@ export function open(item) {
   // 分数一律空着开始：预填上一次的分数等于替她先打了分
   el.scores.forEach((n, i) => { n.value = rv ? rv.s[i] : 0; });
   el.total.value = rv ? rv.total : 0;
+  el.price.value = rv ? (rv.price || "") : "";
+
+  // 截图状态每次打开都清干净：上一条的图绝不能串到这一条
+  pendingFile = null;
+  shotPath = rv ? (rv.shot || "") : "";
+  openedShot = shotPath;
+  showShot(null);
+  el.shotHint.textContent = "图存在云上，所以要先登录；长边压到 1200 再传";
+  el.shotHint.classList.remove("bad");
+  if (shotPath) {
+    el.shotEmpty.textContent = "在取图…";
+    const want = shotPath;
+    shots.url(shotPath).then(u => {
+      // 取图是异步的，回来时她可能已经翻到别的记录了
+      if (shotPath !== want) return;
+      el.shotEmpty.textContent = "订单截图放这儿，回头核价用";
+      if (u) showShot(u);
+      else {
+        el.shotHint.textContent = "有存过截图，但取不出来——检查一下登录和网络";
+        el.shotHint.classList.add("bad");
+      }
+    });
+  } else {
+    el.shotEmpty.textContent = "订单截图放这儿，回头核价用";
+  }
   el.verdict.value = rv ? rv.verdict : "";
   el.date.value = rv ? rv.date : card.today();
   setBuy(rv ? rv.buy : null);

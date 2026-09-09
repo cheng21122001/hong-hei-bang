@@ -36,9 +36,11 @@ js/sync.js            什么时候同步、怎么合并
 js/board.js           3×3 榜单渲染
 js/sheet.js           添加/编辑弹层
 js/card.js            评分卡：画 1080×1920 的 canvas 并存成 PNG
+js/shots.js           价目截图：压缩、传 Supabase Storage、换签名 URL
 js/migrate.js         一次性数据迁移
 js/account.js         同步状态药丸与登录弹层
 supabase/schema.sql   云端建表，在 Supabase 后台跑一次
+supabase/storage.sql  价目截图的桶和权限，同样跑一次
 tools/make-icons.py   生成图标 PNG
 sw.js                 离线缓存
 ```
@@ -61,6 +63,12 @@ sw.js                 离线缓存
 评分存在 `dishes.review` 这个 jsonb 列里：
 `{ s:[味道,量价比,配料表], total, buy, verdict, date }`。
 用 jsonb 而不是拆成四五个列，是为了以后加评分维度（比如「惊喜感」）不用再改表。
+
+**价目截图不走这条路**：一张订单截图 100–200KB，localStorage 全部才 5MB，
+塞进同步的数据行里也会让每次 upsert 拖着几百 KB 走。所以图放 Supabase Storage
+的 `shots` 私有桶，路径是 `<user_id>/<记录id>.jpg`，记录里只留 `review.shot` 这个路径。
+四条策略拿路径第一段和 `auth.uid()` 比，别人的目录一个字节都碰不到；读图靠一小时期限的签名 URL。
+**代价：存截图必须登录**——没登录就没有「你自己的目录」这回事，界面会直说。
 
 同步规则：**先拉后推**。拉下来的不覆盖本地未推送的改动，随后本地改动推上去
 覆盖云端。同一条在两台设备都改过，后同步的那台赢。删除用墓碑
