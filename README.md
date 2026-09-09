@@ -1,12 +1,18 @@
-# 红黑榜
+# 小熊测评红黑榜
 
-我的私房菜品评分册。两条轴——口味、健康——把每道菜放进四个象限：
-右上是红榜，左下是黑榜。
+小熊的零食测评榜。每件零食打三条 0–5 分——味道 / 量价比 / 配料表——
+再由味道和配料表两个分数把它放进 3×3 的榜里：右上红榜，左下黑榜。
+填完能直接导出一张 1080×1920 的评分卡 PNG，进剪映当成片素材。
 
 线上：<https://cheng21122001.github.io/hong-hei-bang/>
 
-原来是个 Claude Artifact，2026-08-28 搬成独立站点，为的是能有自己的图标
-和真正的云同步。设计过程见 `docs/superpowers/specs/2026-08-28-hong-hei-bang-design.md`。
+来历分两段：
+- 2026-08-28 从 Claude Artifact 搬成独立站点，为的是能有自己的图标和真正的云同步。
+  设计过程见 `docs/superpowers/specs/2026-08-28-hong-hei-bang-design.md`。
+- 2026-09-09 和「小熊评分卡」（原来是个桌面 .app，源码在 `~/Downloads/小熊/评分卡app/`）
+  合并，收窄成只做零食测评。原来那 188 条家常菜整批清掉了，留在
+  `seed-家常菜-备份.json` 里；`js/migrate.js` 的 `dropDishes()` 负责让云端和手机
+  跟着一起清。
 
 ## 怎么跑
 
@@ -22,12 +28,15 @@ localhost 算安全上下文，直接开 `file://` 不行。
 ```
 index.html            外壳
 app.css               全部样式
-seed.json             初始榜单（从 Artifact 版搬过来的 157 条）
+seed.json             初始榜单（现在是空的，新设备从零开始）
+seed-家常菜-备份.json  合并前那 188 条家常菜，只作备份，代码不读它
 js/store.js           本地存储，唯一的显示来源
 js/cloud.js           Supabase 账号与读写
 js/sync.js            什么时候同步、怎么合并
-js/board.js           四象限渲染
+js/board.js           3×3 榜单渲染
 js/sheet.js           添加/编辑弹层
+js/card.js            评分卡：画 1080×1920 的 canvas 并存成 PNG
+js/migrate.js         一次性数据迁移
 js/account.js         同步状态药丸与登录弹层
 supabase/schema.sql   云端建表，在 Supabase 后台跑一次
 tools/make-icons.py   生成图标 PNG
@@ -49,8 +58,12 @@ sw.js                 离线缓存
 `js/config.js` 里那串 anon key 是公开值不是密钥——能做什么完全由 RLS 决定，
 `dishes` 表的策略是「只能读写 auth.uid() 等于自己的行」。
 
+评分存在 `dishes.review` 这个 jsonb 列里：
+`{ s:[味道,量价比,配料表], total, buy, verdict, date }`。
+用 jsonb 而不是拆成四五个列，是为了以后加评分维度（比如「惊喜感」）不用再改表。
+
 同步规则：**先拉后推**。拉下来的不覆盖本地未推送的改动，随后本地改动推上去
-覆盖云端。同一道菜在两台设备都改过，后同步的那台赢。删除用墓碑
+覆盖云端。同一条在两台设备都改过，后同步的那台赢。删除用墓碑
 （`deleted = true`），不真删行，否则删除传不到另一台设备。
 
 不登录也能用，改动全存本地；哪天登录了会一次性并进账号。

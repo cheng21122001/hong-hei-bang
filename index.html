@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>红黑榜</title>
-<meta name="description" content="我的私房菜品评分册。">
+<title>小熊测评红黑榜</title>
+<meta name="description" content="小熊的零食测评榜。">
 
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#17130f" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#efe7d4" media="(prefers-color-scheme: light)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="红黑榜">
+<meta name="apple-mobile-web-app-title" content="小熊测评红黑榜">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="icons/icon-192.png" sizes="192x192">
@@ -27,7 +27,7 @@
 <div class="app">
   <header class="app-header">
     <div class="title-row">
-      <h1><span class="w-red">红</span><span class="w-ink">黑</span>榜</h1>
+      <h1><span class="w-bear">小熊测评</span><span class="w-red">红</span><span class="w-ink">黑</span>榜</h1>
       <button type="button" class="sync-chip" id="sync-chip" title="云同步">未登录</button>
     </div>
   </header>
@@ -35,53 +35,72 @@
   <div class="filter-bar">
     <div class="search-wrap">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-      <input type="search" id="search" placeholder="搜菜名…" aria-label="搜索菜名">
+      <input type="search" id="search" placeholder="搜商品名…" aria-label="搜索商品名">
     </div>
-    <button type="button" class="ban-toggle" id="ban-filter">禁忌</button>
+    <button type="button" class="ban-toggle" id="ban-filter">拉黑</button>
   </div>
 
   <main class="board" id="board" aria-live="polite"></main>
 
-  <button class="fab" id="fab" aria-label="添加菜品" title="添加菜品">+</button>
+  <button class="fab" id="fab" aria-label="添加测评" title="添加测评">+</button>
 
   <dialog id="sheet">
     <form class="sheet" id="form" method="dialog">
-      <h3 id="sheet-title">添加菜品</h3>
+      <h3 id="sheet-title">添加测评</h3>
       <input type="hidden" id="edit-id" value="">
 
       <div class="field">
-        <label for="f-name">菜名</label>
-        <input type="text" id="f-name" maxlength="40" placeholder="例如：麻婆豆腐" autocomplete="off">
-        <p class="field-error" id="name-error">请填写菜名</p>
+        <label for="f-name">商品名</label>
+        <input type="text" id="f-name" maxlength="40" placeholder="这期测的什么" autocomplete="off">
+        <p class="field-error" id="name-error">请填写商品名</p>
       </div>
 
-      <div class="field">
-        <label>口味</label>
-        <div class="toggle-pair" id="toggle-taste">
-          <button type="button" data-val="red" class="on red">好吃</button>
-          <button type="button" data-val="mid">一般</button>
-          <button type="button" data-val="ink">踩雷</button>
+      <div class="mode-review">
+        <div class="field">
+          <div class="rowhead">
+            <label for="s0">评分</label>
+            <button type="button" class="mini" id="btn-avg">综合 = 平均分</button>
+          </div>
+          <div class="score"><span class="nm">味　道</span><input type="range" id="s0" min="0" max="5" step="0.5" value="0" aria-label="味道"><span class="val" id="v0">0.0</span></div>
+          <div class="score"><span class="nm">量价比</span><input type="range" id="s1" min="0" max="5" step="0.5" value="0" aria-label="量价比"><span class="val" id="v1">0.0</span></div>
+          <div class="score"><span class="nm">配料表</span><input type="range" id="s2" min="0" max="5" step="0.5" value="0" aria-label="配料表"><span class="val" id="v2">0.0</span></div>
+          <div class="score total"><span class="nm">综　合</span><input type="range" id="st" min="0" max="5" step="0.1" value="0" aria-label="综合"><span class="val" id="vt">0.0</span></div>
+          <p class="derive-hint" id="derive-hint"></p>
         </div>
-      </div>
 
-      <div class="field">
-        <label>健康程度</label>
-        <div class="toggle-pair" id="toggle-health">
-          <button type="button" data-val="red" class="on red">健康</button>
-          <button type="button" data-val="mid">一般</button>
-          <button type="button" data-val="ink">不健康</button>
+        <div class="field">
+          <label>回购与否</label>
+          <div class="toggle-pair buy-pair" id="toggle-buy">
+            <button type="button" data-val="1">回购</button>
+            <button type="button" data-val="0">不回购</button>
+          </div>
         </div>
-      </div>
 
-      <div class="field">
-        <label for="f-note">备注（选填）</label>
-        <textarea id="f-note" maxlength="200" placeholder="味道、店家、下次要不要辣…"></textarea>
+        <div class="field">
+          <label for="f-verdict">一句话结论</label>
+          <input type="text" id="f-verdict" maxlength="28" placeholder="一句话说完，14 字最好看" autocomplete="off">
+          <p class="hint">超过 14 字会自动折成两行，最多两行</p>
+        </div>
+
+        <div class="field">
+          <label for="f-date">日期</label>
+          <input type="text" id="f-date" placeholder="2026 . 09 . 09" autocomplete="off">
+        </div>
+
+        <div class="field card-field">
+          <div class="rowhead">
+            <label>评分卡</label>
+            <button type="button" class="mini" id="btn-png">存成 PNG</button>
+          </div>
+          <canvas id="card-cv" width="1080" height="1920" aria-label="评分卡预览"></canvas>
+          <p class="hint" id="png-done">1080×1920，存出来直接进剪映</p>
+        </div>
       </div>
 
       <div class="field">
         <div class="ban-field">
-          <p>长期禁忌<span>保健品、预制菜这类，不列入日常</span></p>
-          <button type="button" class="ban-switch" id="toggle-banned" role="switch" aria-checked="false" aria-label="长期禁忌"></button>
+          <p>拉黑<span>踩过雷、不会再买的，单独挑出来</span></p>
+          <button type="button" class="ban-switch" id="toggle-banned" role="switch" aria-checked="false" aria-label="拉黑"></button>
         </div>
       </div>
 

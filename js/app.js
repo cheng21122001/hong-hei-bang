@@ -71,11 +71,12 @@ sheet.mount({
 (async function start() {
   await store.init();
 
-  // 拆合并菜的一次性迁移。拆出来的都标了 dirty，
-  // 随后 sync.init() 的第一次同步会把它们推上云端。
+  // 一次性迁移。改动都标了 dirty，随后 sync.init() 的第一次同步推上云端。
   const m = migrate.splitCombos();
+  const dropped = migrate.dropDishes();
   paint();
-  if (m) showToast("已把 " + m.combos + " 道合并菜拆成 " + m.added + " 个单品");
+  if (dropped) showToast("已清掉 " + dropped + " 条家常菜，只留零食测评");
+  else if (m) showToast("已把 " + m.combos + " 道合并菜拆成 " + m.added + " 个单品");
 
   account.mount();
   sync.init(paint);

@@ -10,6 +10,9 @@ create table if not exists public.dishes (
   health     text        not null default 'red' check (health in ('red','mid','ink')),
   banned     boolean     not null default false,
   note       text        not null default '',
+  -- 小熊测评的分数整块存这里：{ s:[味道,量价比,配料表], total, buy, verdict, date }
+  -- 家常菜是 null。用 jsonb 而不是拆成列，是为了以后加评分维度不用再改表结构。
+  review     jsonb,
   created_ts bigint      not null,
   edited_ts  bigint,
   -- 墓碑：删除不真删行，否则删除操作传不到另一台设备
@@ -17,6 +20,10 @@ create table if not exists public.dishes (
   updated_at timestamptz not null default now(),
   primary key (user_id, id)
 );
+
+-- 表已经建过了，create table if not exists 不会补列，所以单独加一次。
+-- 2026-09-09 合并小熊评分卡时加的。
+alter table public.dishes add column if not exists review jsonb;
 
 -- 同步游标走 updated_at，按这个顺序取
 create index if not exists dishes_user_updated_idx

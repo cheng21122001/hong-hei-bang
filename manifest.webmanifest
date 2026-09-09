@@ -1,7 +1,7 @@
 {
-  "name": "红黑榜",
-  "short_name": "红黑榜",
-  "description": "我的私房菜品评分册。",
+  "name": "小熊测评红黑榜",
+  "short_name": "小熊测评",
+  "description": "小熊的零食测评榜。",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

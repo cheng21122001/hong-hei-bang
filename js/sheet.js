@@ -1,12 +1,24 @@
-/* sheet.js — 添加 / 编辑菜品的弹层。
+/* sheet.js — 添加 / 编辑一条零食测评。
+   三条 0–5 分（味道 / 量价比 / 配料表）+ 综合 + 回购 + 一句话，
+   它在榜上落哪一格由分数推出来（deriveAxis），不再单独填一遍粗判。
+
    只管收集表单里的值，存哪儿、怎么同步都不归它管：
    保存和删除通过 open() 传进来的回调交出去。
 */
+
+import { deriveAxis } from "./store.js";
+import * as card from "./card.js";
 
 const el = {};
 let deleteArm = false;
 let onSave = null;
 let onDelete = null;
+let buy = null;        // true | false | null——不预选，等她自己表态
+
+const AXIS_LABEL = {
+  taste: { red: "好吃", mid: "一般", ink: "踩雷" },
+  health: { red: "健康", mid: "一般", ink: "不健康" }
+};
 
 export function mount(handlers) {
   onSave = handlers.onSave;
@@ -18,24 +30,55 @@ export function mount(handlers) {
   el.editId = document.getElementById("edit-id");
   el.name = document.getElementById("f-name");
   el.nameError = document.getElementById("name-error");
-  el.note = document.getElementById("f-note");
-  el.taste = document.getElementById("toggle-taste");
-  el.health = document.getElementById("toggle-health");
   el.banned = document.getElementById("toggle-banned");
-  el.saveBtn = document.getElementById("save-btn");
   el.cancelBtn = document.getElementById("cancel-btn");
   el.deleteRow = document.getElementById("delete-row");
   el.deleteBtn = document.getElementById("delete-btn");
 
-  [el.taste, el.health].forEach(pair => {
-    pair.addEventListener("click", e => {
-      const btn = e.target.closest("button");
-      if (btn) setTogglePair(pair, btn.getAttribute("data-val"));
-    });
+  el.scores = [0, 1, 2].map(i => document.getElementById("s" + i));
+  el.vals = [0, 1, 2].map(i => document.getElementById("v" + i));
+  el.total = document.getElementById("st");
+  el.totalVal = document.getElementById("vt");
+  el.avgBtn = document.getElementById("btn-avg");
+  el.buy = document.getElementById("toggle-buy");
+  el.verdict = document.getElementById("f-verdict");
+  el.date = document.getElementById("f-date");
+  el.deriveHint = document.getElementById("derive-hint");
+  el.cardCv = document.getElementById("card-cv");
+  el.pngBtn = document.getElementById("btn-png");
+  el.pngDone = document.getElementById("png-done");
+
+  el.buy.addEventListener("click", e => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    const v = btn.getAttribute("data-val") === "1";
+    setBuy(buy === v ? null : v);   // 再点一下取消，回到「还没表态」
   });
 
   el.banned.addEventListener("click", () => {
     setBannedSwitch(el.banned.getAttribute("data-value") !== "1");
+  });
+
+  el.scores.concat([el.total, el.name, el.verdict, el.date])
+    .forEach(node => node.addEventListener("input", refreshCard));
+
+  el.avgBtn.addEventListener("click", () => {
+    const s = readScores();
+    el.total.value = Math.round(((s[0] + s[1] + s[2]) / 3) * 10) / 10;
+    refreshCard();
+  });
+
+  el.pngBtn.addEventListener("click", async () => {
+    el.pngBtn.disabled = true;
+    try {
+      const name = await card.exportPng(cardData());
+      el.pngDone.textContent = "已存到「下载」· " + name;
+      el.pngDone.classList.add("ok");
+    } catch (e) {
+      el.pngDone.textContent = "没存成：" + (e && e.message ? e.message : e);
+    } finally {
+      el.pngBtn.disabled = false;
+    }
   });
 
   el.cancelBtn.addEventListener("click", () => el.dialog.close());
@@ -63,25 +106,40 @@ export function mount(handlers) {
       el.name.focus();
       return;
     }
+
     onSave({
       id: el.editId.value || null,
       name,
-      taste: el.taste.getAttribute("data-value") || "red",
-      health: el.health.getAttribute("data-value") || "red",
       banned: el.banned.getAttribute("data-value") === "1",
-      note: el.note.value.trim()
+      // 一句话结论同时当备注，榜上悬停就能看见，不用另填一遍
+      note: el.verdict.value.trim(),
+      review: {
+        s: readScores(),
+        total: parseFloat(el.total.value),
+        buy,
+        verdict: el.verdict.value.trim(),
+        date: el.date.value.trim()
+      }
     });
     el.dialog.close();
   });
 }
 
-function setTogglePair(pair, val) {
-  Array.prototype.forEach.call(pair.querySelectorAll("button"), b => {
-    const on = b.getAttribute("data-val") === val;
-    b.classList.toggle("on", on);
-    b.classList.toggle(b.getAttribute("data-val"), on);
+/* ---------- 小工具 ---------- */
+
+function readScores() {
+  return el.scores.map(n => parseFloat(n.value) || 0);
+}
+
+function setBuy(v) {
+  buy = v;
+  Array.prototype.forEach.call(el.buy.querySelectorAll("button"), b => {
+    const mine = b.getAttribute("data-val") === "1";
+    b.classList.toggle("on", buy !== null && buy === mine);
+    b.classList.toggle("yes", mine);
+    b.classList.toggle("no", !mine);
   });
-  pair.setAttribute("data-value", val);
+  refreshCard();
 }
 
 function setBannedSwitch(on) {
@@ -90,32 +148,58 @@ function setBannedSwitch(on) {
   el.banned.setAttribute("data-value", on ? "1" : "0");
 }
 
+function cardData() {
+  const s = readScores();
+  return {
+    title: el.name.value.trim(),
+    scores: s,
+    total: (parseFloat(el.total.value) || 0).toFixed(1),
+    buy,
+    verdict: el.verdict.value.trim(),
+    date: el.date.value.trim()
+  };
+}
+
+/** 分数一动就重画预览，并说清这条会落到榜上哪一格 */
+function refreshCard() {
+  const s = readScores();
+  s.forEach((v, i) => { el.vals[i].textContent = v.toFixed(1); });
+  el.totalVal.textContent = (parseFloat(el.total.value) || 0).toFixed(1);
+
+  el.deriveHint.textContent =
+    "会落在榜上：" + AXIS_LABEL.taste[deriveAxis(s[0])] +
+    " × " + AXIS_LABEL.health[deriveAxis(s[2])] + "（配料表算健康这一轴）";
+
+  el.pngDone.textContent = "1080×1920，存出来直接进剪映";
+  el.pngDone.classList.remove("ok");
+
+  card.draw(el.cardCv, cardData());
+}
+
+/* ---------- 打开 ---------- */
+
 /** 传 item 是编辑，传 null 是新增 */
 export function open(item) {
   el.nameError.classList.remove("show");
   deleteArm = false;
-  el.deleteBtn.textContent = "删除这道菜";
+  el.deleteBtn.textContent = "删除这一条";
   el.deleteBtn.classList.remove("confirm");
 
-  if (item) {
-    el.title.textContent = "编辑菜品";
-    el.editId.value = item.id;
-    el.name.value = item.name;
-    el.note.value = item.note || "";
-    setTogglePair(el.taste, item.taste);
-    setTogglePair(el.health, item.health);
-    setBannedSwitch(!!item.banned);
-    el.deleteRow.hidden = false;
-  } else {
-    el.title.textContent = "添加菜品";
-    el.editId.value = "";
-    el.name.value = "";
-    el.note.value = "";
-    setTogglePair(el.taste, "red");
-    setTogglePair(el.health, "red");
-    setBannedSwitch(false);
-    el.deleteRow.hidden = true;
-  }
+  const rv = item && item.review;
+
+  el.title.textContent = item ? "编辑测评" : "添加测评";
+  el.editId.value = item ? item.id : "";
+  el.name.value = item ? item.name : "";
+  setBannedSwitch(!!(item && item.banned));
+  el.deleteRow.hidden = !item;
+
+  // 分数一律空着开始：预填上一次的分数等于替她先打了分
+  el.scores.forEach((n, i) => { n.value = rv ? rv.s[i] : 0; });
+  el.total.value = rv ? rv.total : 0;
+  el.verdict.value = rv ? rv.verdict : "";
+  el.date.value = rv ? rv.date : card.today();
+  setBuy(rv ? rv.buy : null);
+  refreshCard();
 
   el.dialog.showModal();
   setTimeout(() => el.name.focus(), 50);

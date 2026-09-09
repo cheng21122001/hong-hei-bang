@@ -1,5 +1,6 @@
 /* migrate.js — 一次性的数据迁移。
-   目前只有一条：把菜名里带 ➕ 的合并菜拆成单品。
+   两条：把菜名里带 ➕ 的合并菜拆成单品（旧的，已经跑过了）；
+   把家常菜整批清掉，只留零食测评。
 
    为什么要在 app 里跑而不是只改 seed.json：seed.json 只影响没同步过的新设备，
    已经推上云端的那份还是合并菜，两边会对不上。这里拆完标 dirty，
@@ -59,4 +60,30 @@ export function splitCombos() {
 
   markDone();
   return { combos: combos.length, added: added, skipped: skipped };
+}
+
+/* ================= 只留零食测评 ================= */
+
+const LS_DROPPED = "hhb_migrated_drop_dishes";
+
+/**
+ * 2026-09-09：这个 app 收窄成只做零食测评，一百多条家常菜整批清掉。
+ *
+ * 和清空 seed.json 不是一回事：seed 只管没同步过的新设备，
+ * 已经推上云端的那份还在。这里走墓碑删除、标 dirty，
+ * 由正常的同步通道推上去，手机和云端才会跟着一起清干净。
+ *
+ * 判据是「有没有分数」而不是别的：没有 review 的就是老的家常菜。
+ * 原始 188 条留在仓库的 seed-家常菜-备份.json 里，要找回从那儿来。
+ *
+ * @returns {number|null} 清掉的条数；已经跑过就返回 null
+ */
+export function dropDishes() {
+  try { if (localStorage.getItem(LS_DROPPED) === "1") return null; } catch (e) { return null; }
+
+  const olds = store.all().filter(i => !i.review);
+  olds.forEach(i => store.remove(i.id));
+
+  try { localStorage.setItem(LS_DROPPED, "1"); } catch (e) {}
+  return olds.length || null;
 }

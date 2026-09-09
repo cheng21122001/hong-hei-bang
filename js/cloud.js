@@ -96,6 +96,8 @@ function toRemote(e, userId) {
     health: e.health,
     banned: !!e.banned,
     note: e.note || "",
+    // 小熊测评那套分数整块存成 jsonb：以后加一维（比如「惊喜感」）不用再改表
+    review: e.review || null,
     created_ts: e.createdTs,
     edited_ts: e.editedTs || null,
     deleted: !!e.deleted
@@ -110,6 +112,7 @@ export function fromRemote(r) {
     health: r.health,
     banned: !!r.banned,
     note: r.note || "",
+    review: r.review || null,
     createdTs: Number(r.created_ts),
     editedTs: r.edited_ts ? Number(r.edited_ts) : undefined,
     deleted: !!r.deleted

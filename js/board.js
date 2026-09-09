@@ -33,7 +33,7 @@ function displayName(s) {
 
 /**
  * @param {HTMLElement} board 容器
- * @param {Array} items 全部（未过滤）菜品
+ * @param {Array} items 全部（未过滤）测评
  * @param {{q:string, banOnly:boolean}} filters
  */
 export function render(board, items, filters) {
@@ -47,13 +47,13 @@ export function render(board, items, filters) {
   if (items.length === 0) {
     board.innerHTML =
       '<div class="empty"><div class="empty-mark">榜</div>' +
-      '<h2>还没有记录</h2><p>点右下角的「+」，记下第一道菜吧。</p></div>';
+      '<h2>还没有测评</h2><p>点右下角的「+」，记下第一件零食吧。</p></div>';
     return;
   }
   if (pool.length === 0) {
     board.innerHTML =
       '<div class="empty"><div class="empty-mark">？</div>' +
-      '<h2>没有符合条件的菜</h2><p>试试换个搜索词，或取消「只看长期禁忌」。</p></div>';
+      '<h2>没有符合条件的</h2><p>试试换个搜索词，或取消「只看拉黑」。</p></div>';
     return;
   }
 
@@ -83,8 +83,13 @@ export function render(board, items, filters) {
         ? '<div class="tag-wrap">' + group.map(i => {
             const cls = "tag" + (i.banned ? " is-banned" : "");
             const tip = escapeHtml(i.name) + (i.note ? "（" + escapeHtml(i.note) + "）" : "");
+            // 综合分单独一段，名字再长也挤不掉它
+            const score = i.review
+              ? '<span class="tag-score">' + Number(i.review.total).toFixed(1) + '</span>'
+              : "";
             return '<button type="button" class="' + cls + '" data-id="' + escapeHtml(i.id) +
-              '" title="' + tip + '">' + displayName(i.name) + '</button>';
+              '" title="' + tip + '"><span class="tag-name">' + displayName(i.name) +
+              '</span>' + score + '</button>';
           }).join("") + '</div>'
         : "";
 

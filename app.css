@@ -102,6 +102,15 @@
     letter-spacing: 1px;
     color: var(--text);
   }
+  h1 .w-bear {
+    display: inline-block;
+    margin-right: 6px;
+    font-size: 0.62em;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    vertical-align: 0.22em;
+  }
   h1 .w-red { color: var(--accent-red); }
   h1 .w-ink { color: var(--text); }
 
@@ -340,7 +349,8 @@
      左边那道细界栏是账簿的界行，用来分字，比描边轻得多。 */
   .tag {
     max-width: 100%;
-    padding: 3px 10px 3px 8px;
+    display: block;
+    padding: 3px 8px 3px 8px;
     border: 0;
     border-left: 1px solid var(--heat-rule);
     border-radius: 0;
@@ -353,9 +363,10 @@
     letter-spacing: 0.2px;
     cursor: pointer;
     text-align: left;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    /* 零食名比菜名长，宁可折行也不要截成「无糖…」——
+       格子是竖着长的，多占一行比丢掉半个名字划算 */
+    white-space: normal;
+    word-break: break-word;
   }
   .tag:hover,
   .tag:focus-visible { background: var(--heat-rule); }
@@ -553,3 +564,58 @@
     text-overflow: ellipsis;
   }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* ---------- 零食测评的表单 ---------- */
+  .rowhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+  .rowhead label { margin-bottom: 0; }
+  .mini {
+    flex: none;
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text-muted);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .mini:hover { border-color: var(--border-strong); color: var(--text); }
+  .mini:disabled { opacity: 0.5; cursor: wait; }
+
+  .score { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .score .nm { flex: none; width: 52px; font-size: 13.5px; font-weight: 700; }
+  .score input[type="range"] { flex: 1; min-width: 0; height: 22px; accent-color: var(--accent-red); }
+  .score .val { flex: none; width: 34px; text-align: right; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .score.total { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .score.total .nm { color: var(--accent-red); }
+
+  .derive-hint { font-size: 11.5px; color: var(--text-muted); margin: 10px 0 0; }
+  .hint { font-size: 11.5px; color: var(--text-muted); margin: 6px 0 0; }
+  .hint.ok { color: var(--accent-red); font-weight: 500; }
+
+  .buy-pair button.on.yes { background: #16A34A; border-color: #16A34A; color: #fff; }
+  .buy-pair button.on.no { background: var(--accent-red); border-color: var(--accent-red); color: var(--accent-red-contrast); }
+
+  /* 预览和导出是同一段画法，所以看到的就是存出来的 */
+  .card-field canvas {
+    display: block;
+    width: 168px;
+    height: 298px;
+    margin-top: 4px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #FFFBEB;
+  }
+
+  /* 每条挂一个综合分 */
+  .tag-score {
+    margin-left: 5px;
+    padding: 0 4px;
+    border-radius: 5px;
+    background: color-mix(in srgb, #F59E0B 26%, transparent);
+    color: inherit;
+    font-size: 0.82em;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    vertical-align: baseline;
+  }

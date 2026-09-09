@@ -6,8 +6,13 @@
 
    一条记录：
    { id, name, taste:"red"|"mid"|"ink", health:同上, banned, note,
-     createdTs, editedTs?, deleted?, dirty?, seeded? }
+     createdTs, editedTs?, deleted?, dirty?, seeded?,
+     review?: { s:[味道,量价比,配料表], total, buy:true|false|null, verdict, date } }
 
+   - taste / health 是它在榜上的坐标，一律存在，粗判细判都有。
+   - review 是小熊测评那套细分：只有商品测评有，家常菜是 null。
+     有 review 时 taste / health 由分数推出来（见 deriveAxis），不再单独填——
+     所以同一张榜上，一百多道自家菜（只有粗判）和商品测评（有分数）能混排。
    - deleted 是墓碑：删除不真删行，否则删除操作传不到另一台设备。
    - dirty 表示本地改过、还没推上云端。
    - seeded 表示这条是初始榜单里的、用户一次都没动过。
@@ -34,12 +39,46 @@ function write() {
   catch (e) { /* 存不下就只在这次浏览里有效，不该因此崩掉界面 */ }
 }
 
+/**
+ * 0–5 分落到榜上的哪一档。分界取 3.5 和 2：
+ * 满分五分里 3.5 往上才叫「好吃」，2 以下才叫「踩雷」，中间一大段都是「一般」——
+ * 宁可让格子中间挤一点，也不要把「还行」算成好评。
+ */
+export function deriveAxis(score) {
+  const n = Number(score) || 0;
+  if (n >= 3.5) return "red";
+  if (n >= 2) return "mid";
+  return "ink";
+}
+
+/** 表单交上来的 review，洗成能存的形状；不成形就当没有 */
+function normalizeReview(rv) {
+  if (!rv) return null;
+  const s = Array.isArray(rv.s) ? rv.s : [];
+  const num = (v) => {
+    const n = Number(v);
+    return isFinite(n) ? Math.max(0, Math.min(5, n)) : 0;
+  };
+  return {
+    s: [num(s[0]), num(s[1]), num(s[2])],
+    total: num(rv.total),
+    buy: rv.buy === true ? true : rv.buy === false ? false : null,
+    verdict: String(rv.verdict || "").slice(0, 28),
+    date: String(rv.date || "")
+  };
+}
+
 function normalize(r) {
+  const review = normalizeReview(r.review);
   return {
     id: String(r.id),
     name: String(r.name || ""),
-    taste: r.taste === "ink" || r.taste === "mid" ? r.taste : "red",
-    health: r.health === "ink" || r.health === "mid" ? r.health : "red",
+    // 有分数就以分数为准：省得两处各存一份判断、还对不上
+    taste: review ? deriveAxis(review.s[0])
+                  : (r.taste === "ink" || r.taste === "mid" ? r.taste : "red"),
+    health: review ? deriveAxis(review.s[2])
+                   : (r.health === "ink" || r.health === "mid" ? r.health : "red"),
+    review,
     banned: !!r.banned,
     note: r.note || "",
     // 兼容 Artifact 版的字段名 createdAt
@@ -103,8 +142,10 @@ export function upsert(input) {
   }
 
   row.name = String(input.name || "").trim();
-  row.taste = input.taste;
-  row.health = input.health;
+  row.review = normalizeReview(input.review);
+  // 有分数时坐标由分数推出来，表单交上来的粗判就不作数了
+  row.taste = row.review ? deriveAxis(row.review.s[0]) : input.taste;
+  row.health = row.review ? deriveAxis(row.review.s[2]) : input.health;
   row.banned = !!input.banned;
   row.note = input.note || "";
   row.editedTs = now;
