@@ -87,3 +87,56 @@ export function dropDishes() {
   try { localStorage.setItem(LS_DROPPED, "1"); } catch (e) {}
   return olds.length || null;
 }
+
+/* ================= 补录已经拍过的那几期 ================= */
+
+const LS_SEEDED_REVIEWS = "hhb_migrated_seed_reviews";
+
+/**
+ * 2026-09-09：把已经发过片、但榜还没建起来时测的几期补进来。
+ *
+ * 分数全部从 `~/Downloads/小熊/已完成/` 的成片里逐帧读出来的，一个都没有代打——
+ * 只补录了片尾评分卡填齐的那几期，缺分数的那几期等她自己给。
+ * 「量价比」这一维 9 月 2 日那期在片子里叫「性价比」，是同一格，后来才改的名。
+ *
+ * id 写死，两台设备各自跑一遍也是同一批 id，upsert 之后自然收敛。
+ *
+ * @returns {number|null} 补录的条数；已经跑过就返回 null
+ */
+export function seedReviews() {
+  try { if (localStorage.getItem(LS_SEEDED_REVIEWS) === "1") return null; } catch (e) { return null; }
+
+  const rows = [
+    {
+      id: "ep-20260902-sardine",
+      name: "佳必可沙丁鱼罐头",
+      createdTs: Date.parse("2026-09-02T12:00:00+08:00"),
+      review: { s: [2.5, 2.5, 3.0], total: 2.5, buy: false,
+                verdict: "这价格不值", date: "2026 . 09 . 02" }
+    },
+    {
+      id: "ep-20260908-yuntui",
+      name: "潘祥记云腿月饼",
+      createdTs: Date.parse("2026-09-08T12:00:00+08:00"),
+      review: { s: [2.5, 3.0, 1.0], total: 2.2, buy: false,
+                verdict: "馅料问题", date: "2026 . 09 . 08" }
+    }
+  ];
+
+  let added = 0;
+  for (const r of rows) {
+    if (store.get(r.id)) continue;          // 已经有了就别覆盖她后来的改动
+    store.upsert({
+      id: r.id,
+      name: r.name,
+      createdTs: r.createdTs,
+      banned: false,
+      note: r.review.verdict,
+      review: r.review
+    });
+    added++;
+  }
+
+  try { localStorage.setItem(LS_SEEDED_REVIEWS, "1"); } catch (e) {}
+  return added || null;
+}
