@@ -6,7 +6,7 @@
    保存和删除通过 open() 传进来的回调交出去。
 */
 
-import { deriveAxis } from "./store.js";
+import { deriveAxis, unitPrice } from "./store.js";
 import * as card from "./card.js";
 
 const el = {};
@@ -14,6 +14,7 @@ let deleteArm = false;
 let onSave = null;
 let onDelete = null;
 let buy = null;        // true | false | null——不预选，等她自己表态
+let eachOverride = null;   // 她手动改过的单价；null 表示跟着总价÷数量走
 
 const AXIS_LABEL = {
   taste: { red: "好吃", mid: "一般", ink: "踩雷" },
@@ -42,7 +43,11 @@ export function mount(handlers) {
   el.totalVal = document.getElementById("vt");
   el.avgBtn = document.getElementById("btn-avg");
   el.buy = document.getElementById("toggle-buy");
-  el.price = document.getElementById("f-price");
+  el.total_ = document.getElementById("f-total");
+  el.qty = document.getElementById("f-qty");
+  el.unit = document.getElementById("f-unit");
+  el.from = document.getElementById("f-from");
+  el.upVal = document.getElementById("up-val");
   el.verdict = document.getElementById("f-verdict");
   el.date = document.getElementById("f-date");
   el.deriveHint = document.getElementById("derive-hint");
@@ -55,6 +60,21 @@ export function mount(handlers) {
     if (!btn) return;
     const v = btn.getAttribute("data-val") === "1";
     setBuy(buy === v ? null : v);   // 再点一下取消，回到「还没表态」
+  });
+
+  [el.total_, el.qty, el.unit].forEach(n =>
+    n.addEventListener("input", () => { eachOverride = null; paintUnitPrice(); }));
+
+  // 单价算出来不对（买一送一、赠品之类）就点一下自己改
+  el.upVal.addEventListener("click", () => {
+    const now = currentEach();
+    const typed = window.prompt("单价填多少？留空就回到自动算", now == null ? "" : String(round2(now)));
+    if (typed === null) return;
+    const t = typed.trim();
+    if (!t) { eachOverride = null; paintUnitPrice(); return; }
+    const n = Number(t);
+    eachOverride = isFinite(n) && n >= 0 ? n : null;
+    paintUnitPrice();
   });
 
   el.banned.addEventListener("click", () => {
@@ -119,7 +139,7 @@ export function mount(handlers) {
         s: readScores(),
         total: parseFloat(el.total.value),
         buy,
-        price: el.price.value.trim(),
+        price: readPrice(),
         verdict: el.verdict.value.trim(),
         date: el.date.value.trim()
       }
@@ -132,6 +152,43 @@ export function mount(handlers) {
 
 function readScores() {
   return el.scores.map(n => parseFloat(n.value) || 0);
+}
+
+function round2(n) { return Math.round(n * 100) / 100; }
+
+function numOrNull(input) {
+  const v = input.value.trim();
+  if (!v) return null;
+  const n = Number(v);
+  return isFinite(n) && n >= 0 ? n : null;
+}
+
+function readPrice() {
+  return {
+    total: numOrNull(el.total_),
+    qty: numOrNull(el.qty),
+    unit: el.unit.value.trim(),
+    each: eachOverride,
+    from: el.from.value.trim()
+  };
+}
+
+/** 这会儿该显示的单价：改过就用改过的，否则现算 */
+function currentEach() {
+  return unitPrice(readPrice());
+}
+
+function paintUnitPrice() {
+  const each = currentEach();
+  const unit = el.unit.value.trim();
+  if (each == null) {
+    el.upVal.textContent = "—";
+    el.upVal.classList.remove("has", "manual");
+    return;
+  }
+  el.upVal.textContent = round2(each) + " 元" + (unit ? " / " + unit : "");
+  el.upVal.classList.add("has");
+  el.upVal.classList.toggle("manual", eachOverride != null);
 }
 
 
@@ -200,7 +257,13 @@ export function open(item) {
   // 分数一律空着开始：预填上一次的分数等于替她先打了分
   el.scores.forEach((n, i) => { n.value = rv ? rv.s[i] : 0; });
   el.total.value = rv ? rv.total : 0;
-  el.price.value = rv ? (rv.price || "") : "";
+  const pr = rv ? rv.price : null;
+  el.total_.value = pr && pr.total != null ? pr.total : "";
+  el.qty.value = pr && pr.qty != null ? pr.qty : "";
+  el.unit.value = pr ? (pr.unit || "") : "";
+  el.from.value = pr ? (pr.from || "") : "";
+  eachOverride = pr && pr.each != null ? pr.each : null;
+  paintUnitPrice();
 
   el.verdict.value = rv ? rv.verdict : "";
   el.date.value = rv ? rv.date : card.today();

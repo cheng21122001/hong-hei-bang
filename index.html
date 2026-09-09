@@ -69,9 +69,19 @@
         </div>
 
         <div class="field">
-          <label for="f-price">价目</label>
-          <input type="text" id="f-price" maxlength="60" placeholder="多少钱、多少量、折合单价" autocomplete="off">
-          <p class="hint">「量价比」那一分打得对不对，回头就靠这行核</p>
+          <label>价目</label>
+          <div class="price-row">
+            <input type="number" id="f-total" min="0" step="0.01" inputmode="decimal" placeholder="总价" aria-label="总价">
+            <span class="price-sep">元 /</span>
+            <input type="number" id="f-qty" min="0" step="1" inputmode="decimal" placeholder="数量" aria-label="数量">
+            <input type="text" id="f-unit" maxlength="6" placeholder="罐" aria-label="单位">
+          </div>
+          <div class="unit-price" id="unit-price">
+            <span class="up-label">单价</span>
+            <span class="up-val" id="up-val">—</span>
+          </div>
+          <input type="text" id="f-from" maxlength="40" placeholder="哪买的（选填）" autocomplete="off">
+          <p class="hint">单价自动算；算出来不对（比如买一送一）就点它自己改</p>
         </div>
 
         <div class="field">

@@ -9,6 +9,10 @@
      createdTs, editedTs?, deleted?, dirty?, seeded?,
      review?: { s:[味道,量价比,配料表], total, buy:true|false|null, price, verdict, date } }
 
+   - review.price 是价目：{ total 总价, qty 数量, unit 单位, each 单价, from 渠道 }。
+     each 留空就用 total/qty 现算——「量价比」那一分看的就是它，所以它得能一眼看到，
+     不能像早先那样埋在一句自由文本里。旧数据里 price 是个字符串，一律搬进 from。
+
    - taste / health 是它在榜上的坐标，一律存在，粗判细判都有。
    - review 是小熊测评那套细分：只有商品测评有，家常菜是 null。
      有 review 时 taste / health 由分数推出来（见 deriveAxis），不再单独填——
@@ -63,10 +67,38 @@ function normalizeReview(rv) {
     s: [num(s[0]), num(s[1]), num(s[2])],
     total: num(rv.total),
     buy: rv.buy === true ? true : rv.buy === false ? false : null,
-    // 价目是自由文本：「56块6罐，一罐9块3」这种说法固定不成总价/数量/单价三个格子
-    price: String(rv.price || "").slice(0, 60),
+    price: normalizePrice(rv.price),
     verdict: String(rv.verdict || "").slice(0, 28),
     date: String(rv.date || "")
+  };
+}
+
+/** 单价：她填了就用她填的，没填就拿总价除数量。都没有就 null。 */
+export function unitPrice(price) {
+  if (!price) return null;
+  if (price.each != null) return price.each;
+  if (price.total != null && price.qty) return price.total / price.qty;
+  return null;
+}
+
+/** 价目洗成对象。早先存的是一句自由文本，整句搬进 from，不猜里面的数。 */
+function normalizePrice(p) {
+  const empty = { total: null, qty: null, unit: "", each: null, from: "" };
+  if (!p) return empty;
+
+  if (typeof p === "string") return Object.assign(empty, { from: p.slice(0, 60) });
+
+  const num = (v) => {
+    if (v === "" || v == null) return null;
+    const n = Number(v);
+    return isFinite(n) && n >= 0 ? n : null;
+  };
+  return {
+    total: num(p.total),
+    qty: num(p.qty),
+    unit: String(p.unit || "").slice(0, 6),
+    each: num(p.each),
+    from: String(p.from || "").slice(0, 40)
   };
 }
 

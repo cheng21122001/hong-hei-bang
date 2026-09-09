@@ -620,3 +620,41 @@
     vertical-align: baseline;
   }
 
+
+  /* ---------- 价目 ---------- */
+  .price-row { display: flex; align-items: center; gap: 8px; }
+  .price-row input[type="number"] { width: 0; flex: 1 1 0; min-width: 0; }
+  .price-row #f-unit { width: 62px; flex: none; text-align: center; }
+  .price-row input {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text);
+    font: inherit;
+    font-size: 15px;
+  }
+  .price-sep { flex: none; font-size: 13px; color: var(--text-muted); }
+
+  /* 单价单独拎出来，因为「量价比」那一分看的就是它 */
+  .unit-price {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 10px 0 8px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--accent-red) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent-red) 22%, transparent);
+  }
+  .up-label { flex: none; font-size: 12.5px; color: var(--text-muted); letter-spacing: .06em; }
+  .up-val {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+  }
+  .up-val.has { color: var(--accent-red); }
+  /* 手改过的加一道下划线，跟自动算的区分开 */
+  .up-val.manual { text-decoration: underline dotted; text-underline-offset: 3px; }
