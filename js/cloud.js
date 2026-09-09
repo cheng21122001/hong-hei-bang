@@ -21,11 +21,6 @@ function sb() {
   return client;
 }
 
-/** Storage 的句柄，价目截图用，见 shots.js */
-export function storage(bucket) {
-  return sb().storage.from(bucket);
-}
-
 export function available() {
   return !!(window.supabase && window.supabase.createClient);
 }
