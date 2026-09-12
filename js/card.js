@@ -1,4 +1,4 @@
-/* card.js — 小熊测评的评分卡：画成 1080×1920 的竖屏 PNG，直接塞进短视频。
+/* card.js — 小熊红黑榜的评分卡：画成 1080×1920 的竖屏 PNG，直接塞进短视频。
 
    整块画法从 ~/Downloads/小熊/评分卡app/site/index.html 搬过来，一笔没改配色和排版——
    那套纸黄底 + 星级金的样子是定过稿的，成片里已经用了。
@@ -104,7 +104,7 @@ export function draw(cv, d) {
   ctx.textBaseline = "top";
 
   ctx.fillStyle = MUTED; ctx.font = f(400, 32);
-  tracked(ctx, "小熊测评", L, 130, 32 * 0.42);
+  tracked(ctx, "小熊红黑榜", L, 130, 32 * 0.42);
 
   ctx.fillStyle = d.title ? INK : SLOT; ctx.font = f(600, 64);
   ctx.fillText(d.title || "商品名称", L, 196);
